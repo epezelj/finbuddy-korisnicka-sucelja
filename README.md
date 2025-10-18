@@ -1,4 +1,6 @@
-**Project title: **
+**1. ABOUT THE APPLICATION**
+
+**Project title:**
 FinBuddy – A simple web application to help you track your personal finances.
 
 **Problem Statement:**
