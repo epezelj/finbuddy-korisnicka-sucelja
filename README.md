@@ -1,19 +1,20 @@
-**1. ABOUT THE WEB APPLICATION**
+# Project - Finbuddy <!-- omit in toc -->
 
-**Project title:**
-FinBuddy – A simple web application to help you track your personal finances.
+- [My Project Links](#my-project-links)
+  - [Semester Project](#semester-project)
+  - [Semester Assignments](#semester-assignments)
 
-**Problem Statement:**
-Many of us struggle to see exactly where our money goes. While bank applications show balances and broad categories, they don’t break down spending by item, offer insights into event-based expenses, or provide custom time period summaries. Without this detailed visibility, it’s hard to spend with intention.
 
-**Target Users:**
-FinBuddy is designed for budget-conscious consumers, such as students, families or anyone who wants an easy way to track their spending and make smarter financial decisions.
+## My Project Links
 
-**Proposed Solution:**
-With FinBuddy, each user gets a private account where they can monitor their bank and cash balances, log incomes and expenses, and analyze spending trends over selected time period.
+### Semester Project
 
-**Idea:**
-We want to provide a simple and straightforward way for both ourselves and others to understand where we are spending our money.
+- Production version: [**Production Version**]
+- Final report: [**Final Report**]
+<!-- Add more as necessary -->
 
-[▶ Video pitch](FinBuddy_video.mp4)
+Semester Assignments
+
+- Assignment 1: [**Assignment 1 - Idea Pitch**]() 
+
 
