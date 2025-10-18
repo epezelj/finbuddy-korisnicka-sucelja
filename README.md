@@ -15,5 +15,5 @@ With FinBuddy, each user gets a private account where they can monitor their ban
 **Idea:**
 We want to provide a simple and straightforward way for both ourselves and others to understand where we are spending our money.
 
-[▶️ Video pitch](FinBuddy_video.mp4)
+[![▶ Watch demo](FinBuddy_video.mp4)
 
