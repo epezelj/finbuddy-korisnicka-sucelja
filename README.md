@@ -1,6 +1,6 @@
-# Project - Finbuddy <!-- omit in toc -->
+# Project - Finbuddy
 
-- [My Project Links](#my-project-links)
+- [Project Links](#my-project-links)
   - [Semester Project](#semester-project)
   - [Semester Assignments](#semester-assignments)
 
