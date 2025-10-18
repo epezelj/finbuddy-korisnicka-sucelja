@@ -5,14 +5,14 @@
   - [Semester Assignments](#semester-assignments)
 
 
-## My Project Links
+## Project Links
 
 ### Semester Project
 
 - Production version: 
 - Final report: 
 
-Semester Assignments
+###Semester Assignments
 
 - Assignment 1: [**Assignment1-Idea Pitch**]()\
   Video Pitch [**FinBuddy_video.mp4**]()
