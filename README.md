@@ -9,9 +9,8 @@
 
 ### Semester Project
 
-- Production version: [**Production Version**]
-- Final report: [**Final Report**]
-<!-- Add more as necessary -->
+- Production version: 
+- Final report: 
 
 Semester Assignments
 
