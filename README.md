@@ -15,7 +15,7 @@
 Semester Assignments
 
 - Assignment 1: [**Assignment1-Idea Pitch**]()<!-- omit in toc -->
-  Video Pitch [**FinBuddy_video.mp4**]()<!--!-- omit in toc -->
+  \n Video Pitch [**FinBuddy_video.mp4**]()
       
 
 
