@@ -15,6 +15,6 @@
 
 Semester Assignments
 
-- Assignment 1: [**Assignment 1 - Idea Pitch**]() 
+- Assignment 1: [**Assignment1-Idea Pitch**]() 
 
 
