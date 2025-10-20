@@ -15,7 +15,7 @@
 ### Semester Assignments
 
 - Assignment 1: [**Assignment1-Idea Pitch**](https://github.com/epezelj/finbuddy-korisnicka-sucelja/blob/main/Assignment1-Idea%20Pitch.pdf)\
-  Video Pitch: [**FinBuddy_video.mp4**](https://github.com/epezelj/finbuddy-korisnicka-sucelja/blob/main/FinBuddy-video.mp4)
+  Video Pitch: [**FinBuddy-video.mp4**](https://github.com/epezelj/finbuddy-korisnicka-sucelja/blob/main/FinBuddy-video.mp4)
       
 
 
