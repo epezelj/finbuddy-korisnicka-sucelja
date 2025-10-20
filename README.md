@@ -15,7 +15,7 @@
 ### Semester Assignments
 
 - Assignment 1: [**Assignment1-Idea Pitch**]()\
-  Video Pitch: [**FinBuddy_video.mp4**]()
+  Video Pitch: [**[FinBuddy_video.mp4](https://fesb-my.sharepoint.com/:v:/g/personal/epezel00_fesb_hr/ES7MV_Dy4UlGiUNrzLuNHfEB09dQ-SRC467YM53IMMFHDQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=9H8Ppe)**]()
       
 
 
