@@ -2,7 +2,7 @@
 
 - [Project Links](#my-project-links)
   - [Semester Project](#semester-project)
-  - [Semester Assignments](#semester-assignments)
+  - [Semester Assignments](https://github.com/epezelj/finbuddy-korisnicka-sucelja/tree/main/assignments)
 
 
 ## Project Links
