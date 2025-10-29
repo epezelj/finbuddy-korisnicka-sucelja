@@ -14,8 +14,8 @@
 
 ### Semester Assignments
 
-- Assignment 1: [**Assignment1-Idea Pitch**](https://github.com/epezelj/finbuddy-korisnicka-sucelja/tree/main/assignments/assignment1)\
-- Assignment 2: [**Assignment2-User Personas and Information Architecture**](https://github.com/epezelj/finbuddy-korisnicka-sucelja/tree/main/assignments/assignment2)\
+- Assignment 1: [**Assignment1-Idea Pitch**](https://github.com/epezelj/finbuddy-korisnicka-sucelja/tree/main/assignments/assignment1)
+- Assignment 2: [**Assignment2-User Personas and Information Architecture**](https://github.com/epezelj/finbuddy-korisnicka-sucelja/tree/main/assignments/assignment2)
       
 
 
