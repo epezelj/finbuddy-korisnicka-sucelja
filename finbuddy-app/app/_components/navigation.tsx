@@ -10,7 +10,17 @@ type Page = {
 
 
 const pages: Page[] = [
-  { title: "Home", path: "/" },
+
+  { 
+    title: "Login", 
+    path: "/" 
+  },
+
+  {
+    title: "Home",
+    path: "/home",
+  },
+  
   {
     title: "Transactions",
     path: "/transactions",
@@ -48,7 +58,7 @@ function processPage(page: Page, index: number, currentPath?: string) {
     <li key={index}>
       <Link
         href={page.path}
-        className={currentPath === page.path ? "font-extrabold" : ""}
+        className={currentPath === page.path ? "font-extrabold" : "hover:font-extrabold transition-colors duration-150"}
       >
         {page.title}
       </Link>
