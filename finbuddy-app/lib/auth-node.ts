@@ -48,8 +48,16 @@ export async function login(formData: FormData) {
   const password = (formData.get("password") ?? "").toString();
 
   const user = await prisma.user.findUnique({ where: { email } });
-  const ok = user?.passwordHash ? await bcrypt.compare(password, user.passwordHash) : false;
-  if (!user || !ok) throw new Error("Invalid email or password");
+  console.log(user);
+  const ok = user?.passwordHash ? await bcrypt.compare(password, user.passwordHash): false;
+  
+  console.log(user, ok, password, password);
+
+  if (!user || !ok){
+    return {ok, error:"Wrong email addres or password"}
+
+  };
+
 
   const cookieStore = await cookies();
   const expires = new Date(Date.now() + 15 * 60 * 1000);
