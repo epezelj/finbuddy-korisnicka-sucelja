@@ -1,5 +1,6 @@
 "use client";
 
+import { getSession } from "@/lib/auth-node";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -10,11 +11,6 @@ type Page = {
 
 
 const pages: Page[] = [
-
-  { 
-    title: "Login", 
-    path: "/" 
-  },
 
   {
     title: "Home",
@@ -50,6 +46,11 @@ const pages: Page[] = [
     title: "Settings",
     path: "/settings",
   },
+  {
+    title: "Sign Out",
+    path: "/signout",
+  },
+
 ];
 
 
@@ -67,6 +68,7 @@ function processPage(page: Page, index: number, currentPath?: string) {
 }
 
 export function Navigation() {
+
   const currentPath = usePathname();
   return (
     <nav>

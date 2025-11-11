@@ -32,7 +32,6 @@ export async function signup(formData: FormData) {
     select: { id: true, email: true, name: true },
   });
 
-  // issue session cookie
   const cookieStore = await cookies();
   const expires = new Date(Date.now() + 15 * 60 * 1000);
   const session = await encrypt({ user: created, expAt: expires.toISOString() });
@@ -43,21 +42,18 @@ export async function signup(formData: FormData) {
   return created;
 }
 
-export async function login(formData: FormData) {
+export async function signin(formData: FormData) {
   const email = (formData.get("email") ?? "").toString().toLowerCase().trim();
   const password = (formData.get("password") ?? "").toString();
 
   const user = await prisma.user.findUnique({ where: { email } });
-  console.log(user);
   const ok = user?.passwordHash ? await bcrypt.compare(password, user.passwordHash): false;
   
   console.log(user, ok, password, password);
 
-  if (!user || !ok){
-    return {ok, error:"Wrong email addres or password"}
 
-  };
-
+  if (!user || !ok) return { field: "email", error: "Email or password are incorrect" };
+ 
 
   const cookieStore = await cookies();
   const expires = new Date(Date.now() + 15 * 60 * 1000);
@@ -66,13 +62,17 @@ export async function login(formData: FormData) {
   cookieStore.set("session", token, {
     httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/", expires,
   });
+
+  return { ok: true };
+
 }
 
-export async function logout() {
+export async function signout() {
   const cookieStore = await cookies();
   cookieStore.set("session", "", {
     httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/", expires: new Date(0),
   });
+   console.log(getSession());
 }
 
 export async function getSession() {
