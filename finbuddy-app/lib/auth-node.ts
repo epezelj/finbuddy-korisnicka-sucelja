@@ -86,11 +86,12 @@ export async function signout() {
   cookieStore.set("session", "", {
     httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/", expires: new Date(0),
   });
-   if (!cookieStore){
-    return {check: true}
+   if (cookieStore.get("session")?.value){
+    console.log("DEBUG4");
+    return {isSession: true}
    }
    else{
-    return {check: false}
+    return {isSession: false}
    }
 }
 

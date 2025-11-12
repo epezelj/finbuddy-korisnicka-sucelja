@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { signout } from "@/lib/auth-node";  
 
-export async function GET(request: Request) {
-    console.log("DEBUG");
-  await signout();  
-  return NextResponse.redirect(new URL("/signin", request.url));  
+export async function GET(req: Request) {
+      console.log("DEBUG2");
+
+  const result = await signout();
+
+  console.log(result);
+
+  return NextResponse.json(result);
 }
+

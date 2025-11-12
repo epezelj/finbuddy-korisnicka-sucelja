@@ -11,16 +11,16 @@ export default function SignInForm() {
 
     setErrorMessage(null);
 
-    const formData = new FormData(e.currentTarget); // Collect form data
+    const formData = new FormData(e.currentTarget); 
     const res = await fetch("/api/signin", { 
             method: "POST",
             body: formData, 
     });
 
-    const data = await res.json();  // Parse the JSON response
+    const data = await res.json(); 
 
     if (!data?.check) {
-      setErrorMessage(data.error);  // Display generic error message
+      setErrorMessage(data.error);  
       return;
     }
 
