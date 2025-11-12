@@ -17,7 +17,7 @@ export async function decryptEdge(input: string) {
   return payload;
 }
 
-// Only cookie refresh logic (no prisma/bcrypt here!)
+
 export async function updateSessionEdge(request: NextRequest) {
   const token = request.cookies.get("session")?.value;
   if (!token) return;
