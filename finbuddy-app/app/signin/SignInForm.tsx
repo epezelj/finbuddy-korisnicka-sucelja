@@ -7,6 +7,7 @@ export default function SignInForm() {
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+      console.log("Test");
     e.preventDefault(); 
 
     setErrorMessage(null);
@@ -20,11 +21,14 @@ export default function SignInForm() {
     const data = await res.json(); 
 
     if (!data?.check) {
+          console.log("deb2");
+
       setErrorMessage(data.error);  
       return;
     }
 
-    redirect("/home");
+    redirect("/blog");
+    
   }
 
   return (

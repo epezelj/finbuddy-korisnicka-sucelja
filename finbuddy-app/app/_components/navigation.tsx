@@ -1,8 +1,8 @@
 "use client";
 
-import { getSession } from "@/lib/auth-node";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 
 type Page = {
   title: string;

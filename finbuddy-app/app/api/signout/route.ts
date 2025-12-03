@@ -1,13 +1,19 @@
-import { NextResponse } from "next/server";
-import { signout } from "@/lib/auth-node";  
+// app/api/signout/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { signoutInfo } from "@/lib/auth-node"; 
 
-export async function GET(req: Request) {
-      console.log("DEBUG2");
+export async function GET(req: NextRequest) {
+  const info = await signoutInfo().catch(() => ({ isSession: false }));
 
-  const result = await signout();
+  const res = NextResponse.json(info);
 
-  console.log(result);
+  res.cookies.set("session", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    expires: new Date(0), 
+  });
 
-  return NextResponse.json(result);
+  return res;
 }
-
