@@ -9,7 +9,7 @@ export default function SignOut() {
     const signOutUser = async () => {
       const res = await fetch("/api/signout", { method: "GET" });
       const data = await res.json();
-      console.log(data.isSession);
+      console.log(data);
 
       if (!data.isSession) {
         console.log("TEST");

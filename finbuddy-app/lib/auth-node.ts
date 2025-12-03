@@ -3,6 +3,8 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
+import { cookies } from "next/headers";
+
 import { SignJWT, jwtVerify } from "jose";
 
 const secretKey = process.env.SESSION_SECRET ?? "dev_secret_change_me";
@@ -109,8 +111,6 @@ export async function signin(formData: FormData) {
   };
 }
 
-// lib/auth-node.ts
-import { cookies } from "next/headers";
 
 export async function signoutInfo() {
   const cookieStore = await cookies();
@@ -118,8 +118,7 @@ export async function signoutInfo() {
   return { isSession: hasSession };
 }
 
-// signout + getSession can stay if you use them from server components;
-// but for /api/signout you'll set cookies on NextResponse in the route.
+
 export async function getSessionFromToken(token: string) {
   try {
     const { payload } = await jwtVerify(token, key, {

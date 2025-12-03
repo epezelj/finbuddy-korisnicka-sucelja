@@ -27,7 +27,7 @@ export default function SignInForm() {
       return;
     }
 
-    redirect("/blog");
+    redirect("/home");
     
   }
 
