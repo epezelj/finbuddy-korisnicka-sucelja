@@ -68,7 +68,6 @@ export async function signup(formData: FormData) {
     expAt: expires.toISOString(),
   });
 
-  // ➜ only return data; DO NOT set cookies here
   return {
     check: "success",
     token,
@@ -110,7 +109,6 @@ export async function signin(formData: FormData) {
     expires,
   };
 }
-
 
 export async function signoutInfo() {
   const cookieStore = await cookies();
