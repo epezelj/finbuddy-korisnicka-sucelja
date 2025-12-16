@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Navigation } from "./_components/navigation";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +30,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <header className="fixed top-0 left-0 right-0 z-50 border-b">
+          <div className="container mx-auto py-4 flex justify-center">
+            <Navigation />
+          </div>
+        </header>
+        <main className="pt-20">
+          <NuqsAdapter>{children}</NuqsAdapter>
+        </main>
       </body>
     </html>
   );
