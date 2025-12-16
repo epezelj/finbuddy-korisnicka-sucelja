@@ -30,12 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <header className="fixed top-0 left-0 right-0 z-50 border-b">
-          <div className="container mx-auto py-4 flex justify-center">
-            <Navigation />
-          </div>
-        </header>
-        <main className="pt-20">
+        <main className="h-20">
           <NuqsAdapter>{children}</NuqsAdapter>
         </main>
       </body>

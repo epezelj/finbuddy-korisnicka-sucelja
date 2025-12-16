@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Pagination } from "../_components/Pagination";
 import { BlogFilters } from "./_components/BlogFilters";
 import { notFound } from "next/navigation";
+import { Navigation } from "@components/navigation"; 
 
 export interface BlogPostProps {
   userId: number;
@@ -118,6 +119,7 @@ export default async function Page({ searchParams }: BlogPageSearchParams) {
 
   return (
     <main>
+      <Navigation />
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           {/* Header */}

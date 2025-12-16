@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { BASE_API_URL } from "../page";
 import type { BlogPostProps as Post } from "../page";
 import { Suspense } from "react";
+import { Navigation } from "@components/navigation";
 
 interface BlogPostProps {
   params: { id: string };
@@ -60,6 +61,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
   const { id } = await params;
   return (
     <main className="flex flex-col items-center p-10">
+      <Navigation/>
       <Suspense fallback={<PostSkeleton />}>
         <PostContent id={id} />
       </Suspense>
