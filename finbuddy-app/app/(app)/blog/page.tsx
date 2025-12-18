@@ -25,11 +25,14 @@ type StrapiListResponse<T> = {
 };
 
 type AuthorAttrs = { name?: string; username?: string };
+
+type MediaAttrs = { url?: string; alternativeText?: string };
 type ArticleAttrs = {
   title?: string;
   description?: string;
   slug?: string;
-  author?: { data?: any } | any; // v4 relation: {data:{...}} ; v5 might vary
+  author?: { data?: any } | any;
+  cover?: { data?: any } | any; // ✅ add cover
 };
 
 type ArticleListItem = {
@@ -39,7 +42,18 @@ type ArticleListItem = {
   slug: string;
   authorId: number;
   authorName: string;
+  coverUrl: string; // ✅ add
+  coverAlt: string; // ✅ add
 };
+
+// If your strapiFetch already prefixes baseURL, you can keep this simple.
+// If you need to prefix STRAPI_URL for relative media URLs, adjust here.
+function toMediaUrl(url?: string) {
+  if (!url) return "";
+  // If Strapi returns /uploads/... you may need NEXT_PUBLIC_STRAPI_URL
+  const base = process.env.NEXT_PUBLIC_STRAPI_URL ?? "";
+  return url.startsWith("http") ? url : `${base}${url}`;
+}
 
 async function fetchArticles(page: number, pageSize: number, authorId?: number) {
   const qs = new URLSearchParams({
@@ -47,6 +61,7 @@ async function fetchArticles(page: number, pageSize: number, authorId?: number) 
     "pagination[pageSize]": String(pageSize),
     "sort[0]": "publishedAt:desc",
     "populate[author]": "true",
+    "populate[cover]": "true", // ✅ populate cover
   });
 
   if (authorId && authorId > 0) {
@@ -60,9 +75,11 @@ async function fetchArticles(page: number, pageSize: number, authorId?: number) 
   const articles: ArticleListItem[] = (json.data ?? []).map((a: any) => {
     const attrs = getAttrs<ArticleAttrs>(a);
 
-    // v4: attrs.author.data exists
     const authorEntity = attrs.author?.data ?? attrs.author ?? null;
     const authorAttrs = getAttrs<AuthorAttrs>(authorEntity);
+
+    const coverEntity = attrs.cover?.data ?? attrs.cover ?? null;
+    const coverAttrs = getAttrs<MediaAttrs>(coverEntity);
 
     return {
       id: Number(a?.id ?? 0),
@@ -71,17 +88,15 @@ async function fetchArticles(page: number, pageSize: number, authorId?: number) 
       slug: String(attrs.slug ?? String(a?.id ?? "")),
       authorId: Number(authorEntity?.id ?? 0),
       authorName: String(authorAttrs.name ?? authorAttrs.username ?? "Unknown"),
+      coverUrl: String(coverAttrs.url ?? ""),
+      coverAlt: String(coverAttrs.alternativeText ?? attrs.title ?? "Cover"),
     };
   });
 
-  const total =
-    json.meta?.pagination?.total ??
-    articles.length; // fallback if meta missing
-
+  const total = json.meta?.pagination?.total ?? articles.length;
   return { articles, total };
 }
 
-// If your “author” options come from a collection called authors:
 async function fetchAuthorsForFilter(): Promise<{ id: number; name: string }[]> {
   const qs = new URLSearchParams({
     "pagination[page]": "1",
@@ -108,20 +123,29 @@ function processArticle(article: ArticleListItem) {
     <li key={article.slug} className="list-none">
       <Link
         href={`/blog/${article.slug}`}
-        className="group block bg-white hover:shadow-lg border-1 border-gray-300 hover:border-gray-400 rounded-lg p-5 transition-all duration-200"
+        className="group block bg-white hover:shadow-lg border-1 border-gray-300 hover:border-gray-400 rounded-lg overflow-hidden transition-all duration-200"
       >
-        <div className="flex items-center gap-4">
-          <div className="flex-shrink-0 w-10 h-10 rounded bg-gray-200 border border-gray-300" />
+        {/* ✅ COVER ON MAIN BLOG PAGE */}
+        {article.coverUrl ? (
+          <img
+            src={toMediaUrl(article.coverUrl)}
+            alt={article.coverAlt}
+            className="w-full h-48 object-cover"
+          />
+        ) : null}
 
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold capitalize text-lg text-gray-900 mb-0.5">
-              {article.title}
-            </h3>
-            <p className="text-sm text-gray-500">{article.description}</p>
-            <p className="text-sm text-gray-500 mt-1">By {article.authorName}</p>
+        <div className="p-5">
+          <div className="flex items-center gap-4">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold capitalize text-lg text-gray-900 mb-0.5">
+                {article.title}
+              </h3>
+              <p className="text-sm text-gray-500">{article.description}</p>
+              <p className="text-sm text-gray-500 mt-1">By {article.authorName}</p>
+            </div>
+
+            <ArrowRight className="mr-2 h-4 w-4 text-gray-600 group-hover:text-gray-900 transition-colors duration-200" />
           </div>
-
-          <ArrowRight className="mr-2 h-4 w-4 text-gray-600 group-hover:text-gray-900 transition-colors duration-200" />
         </div>
       </Link>
     </li>
@@ -154,9 +178,7 @@ export default async function Page({ searchParams }: BlogPageProps) {
 
           <BlogFilters users={users} currentUserId={userId} />
 
-          <ul className="space-y-3">
-            {articleResult.articles.map((a) => processArticle(a))}
-          </ul>
+          <ul className="space-y-3">{articleResult.articles.map(processArticle)}</ul>
 
           <div className="flex justify-center mt-8">
             <Pagination currentPage={page} totalPages={totalPages} />
