@@ -5,6 +5,7 @@ import "./globals.css";
 import { Navigation } from "./_components/navigation";
 
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,7 +27,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    
     <html lang="en">
+    <div className="h-14" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

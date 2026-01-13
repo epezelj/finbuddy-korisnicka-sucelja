@@ -1,7 +1,7 @@
-// middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
+
 
 const key = new TextEncoder().encode(
   process.env.SESSION_SECRET ?? "dev_secret_change_me"

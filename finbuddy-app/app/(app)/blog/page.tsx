@@ -3,7 +3,7 @@ import type { SearchParams } from "nuqs/server";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Pagination } from "../_components/Pagination";
+import { Pagination } from "../../_components/Pagination";
 import { BlogFilters } from "./_components/BlogFilters";
 import { notFound } from "next/navigation";
 import { Navigation } from "@components/navigation"; 
