@@ -6,7 +6,7 @@ import { Wallet, CreditCard } from "lucide-react";
 type Account = {
   id: string;
   userId: string;
-  type: string; // "cash" | "card"
+  type: string;
   name: string;
   balanceCents: number;
 };
