@@ -1,5 +1,6 @@
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Navigation } from "../_components/navigation";
+import {Footer} from "../_components/Footer";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </header>
       <div className="h-14" />
       <NuqsAdapter>{children}</NuqsAdapter>
+      <Footer />
     </>
   );
 }
