@@ -225,7 +225,7 @@ export default function TransactionsPage() {
     setAdding(true);
     try {
       const res = await fetch("/api/transactions", {
-        method: "POST", // ✅ add
+        method: "POST", 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           kind,
@@ -286,7 +286,7 @@ export default function TransactionsPage() {
 
   async function updateTransaction(id: string, payload: any) {
     const res = await fetch("/api/transactions", {
-      method: "PATCH", // ✅ edit
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, ...payload }),
     });
