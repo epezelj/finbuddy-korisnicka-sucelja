@@ -12,6 +12,7 @@
   "dependencies": {
     "@auth/core": "^0.41.1",
     "@auth/prisma-adapter": "^2.11.1",
+    "@contentful/rich-text-html-renderer": "^17.1.6",
     "@paralleldrive/cuid2": "^3.0.4",
     "@supabase/realtime-js": "^2.81.0",
     "@supabase/supabase-js": "^2.81.0",
@@ -35,7 +36,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
-    "baseline-browser-mapping": "^2.8.32",
+    "baseline-browser-mapping": "^2.9.19",
     "npm-run-all": "^4.1.5",
     "prisma": "^6.19.0",
     "tailwindcss": "^4",
