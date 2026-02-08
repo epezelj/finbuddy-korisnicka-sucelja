@@ -1,43 +1,79 @@
 // app/blog/[slug]/page.tsx
+
 import { notFound } from "next/navigation";
 import { getPost } from "@/lib/blog";
 import { richTextToHtml } from "@/lib/content-render";
 
-const toHttps = (u?: string) => (u?.startsWith("//") ? `https:${u}` : u);
+// Helper: Contentful često vraća //images.ctfassets.net/...
+const toHttps = (url?: string) =>
+  url?.startsWith("//") ? `https:${url}` : url;
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = await getPost(params.slug);
+export default async function BlogPostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  // ✅ Next.js 16: params je Promise → mora se awaitati
+  const { slug } = await params;
+
+  if (!slug) notFound();
+
+  const post = await getPost(slug);
   if (!post) notFound();
 
-  const f = post.fields;
+  const fields = post.fields;
 
-  const featuredUrl = toHttps(f.featuredImage?.fields?.file?.url);
-  const featuredAlt = f.featuredImage?.fields?.title || f.title;
+  const featuredImageUrl = toHttps(
+    fields.featuredImage?.fields?.file?.url
+  );
+  const featuredImageAlt =
+    fields.featuredImage?.fields?.title || fields.title;
 
-  const html = f.content ? richTextToHtml(f.content, post.includes) : "<p>No content</p>";
+  const contentHtml = fields.content
+    ? richTextToHtml(fields.content, post.includes)
+    : "<p>No content available.</p>";
 
   return (
     <main style={{ maxWidth: 900, margin: "0 auto", padding: 24 }}>
-      <h1 style={{ marginBottom: 6 }}>{f.title}</h1>
-      {f.subtitle ? <p style={{ marginTop: 0, color: "#555" }}>{f.subtitle}</p> : null}
-      {f.publishedDate ? <p style={{ color: "#777" }}>{new Date(f.publishedDate).toLocaleDateString()}</p> : null}
+      {/* Title */}
+      <h1 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 8 }}>
+        {fields.title}
+      </h1>
 
-      {featuredUrl ? (
+      {/* Subtitle */}
+      {fields.subtitle && (
+        <p style={{ marginTop: 0, color: "#555" }}>
+          {fields.subtitle}
+        </p>
+      )}
+
+      {/* Date */}
+      {fields.publishedDate && (
+        <p style={{ color: "#777", fontSize: 14 }}>
+          {new Date(fields.publishedDate).toLocaleDateString()}
+        </p>
+      )}
+
+      {/* Featured image */}
+      {featuredImageUrl && (
         <img
-          src={featuredUrl}
-          alt={featuredAlt}
-          style={{ width: "100%", borderRadius: 12, margin: "12px 0" }}
+          src={featuredImageUrl}
+          alt={featuredImageAlt}
+          style={{
+            width: "100%",
+            height: 400,
+            objectFit: "cover",
+            borderRadius: 16,
+            margin: "16px 0",
+          }}
         />
-      ) : null}
+      )}
 
-      <div dangerouslySetInnerHTML={{ __html: html }} />
-
-      <hr style={{ margin: "24px 0" }} />
-
-      <h3>Raw fields (as-is)</h3>
-      <pre style={{ background: "#f6f6f6", padding: 12, borderRadius: 12, overflow: "auto" }}>
-        {JSON.stringify(f, null, 2)}
-      </pre>
+      {/* Content (Rich Text rendered as-is) */}
+      <article
+        style={{ lineHeight: 1.7 }}
+        dangerouslySetInnerHTML={{ __html: contentHtml }}
+      />
     </main>
   );
 }
