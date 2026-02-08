@@ -55,7 +55,6 @@ export async function GET() {
       kind: transactions.kind,
       amountCents: transactions.amountCents,
       category: transactions.category,
-      name: transactions.name,
       date: transactions.date,
       note: transactions.note,
       accountId: transactions.accountId,
@@ -80,10 +79,8 @@ export async function POST(req: Request) {
   const kind = body.kind === "income" || body.kind === "expense" ? body.kind : null;
   const amount = typeof body.amount === "number" ? body.amount : null;
   const accountId = typeof body.accountId === "string" ? body.accountId : null;
-  const name = typeof body.name === "string" ? body.name.trim() : "";
   const category = typeof body.category === "string" ? body.category.trim() : "";
   const date = typeof body.date === "string" ? body.date : null;
-
   const note = typeof body.note === "string" ? body.note.trim() : null;
 
   if (!kind || amount === null || !accountId || !category || !date) {
@@ -101,23 +98,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid account" }, { status: 400 });
   }
 
-  if (!kind || amount === null || !accountId || !name || !category || !date) {
-    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
-  }
-
-
   const row = {
-  id: createId(),
-  userId,
-  accountId,
-  kind,
-  amountCents: toCents(amount),
-  name,                
-  category,
-  date,
-  note,
-};
-
+    id: createId(),
+    userId,
+    accountId,
+    kind,
+    amountCents: toCents(amount),
+    category,
+    date, // "YYYY-MM-DD"
+    note,
+  };
 
   // Insert the transaction into the database
   await db.insert(transactions).values(row);
@@ -129,86 +119,6 @@ export async function POST(req: Request) {
   } else if (kind === "expense") {
     await updateAccountBalance(accountId, -amountCents); // Decrease balance for expense
   }
-
-  return NextResponse.json({ ok: true });
-}
-
-
-export async function PATCH(req: Request) {
-  const userId = await getUserIdFromSession();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const body = await req.json().catch(() => ({}));
-
-  const id = typeof body.id === "string" ? body.id : null;
-  const kind = body.kind === "income" || body.kind === "expense" ? body.kind : null;
-  const amount = typeof body.amount === "number" ? body.amount : null;
-  const accountId = typeof body.accountId === "string" ? body.accountId : null;
-  const name = typeof body.name === "string" ? body.name.trim() : "";
-  const category = typeof body.category === "string" ? body.category.trim() : "";
-  const date = typeof body.date === "string" ? body.date : null;
-  const note = typeof body.note === "string" ? body.note.trim() : null;
-
-  // Your POST requires name — keep edit consistent
-  if (!id || !kind || amount === null || !accountId || !name || !category || !date) {
-    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
-  }
-
-  // Load existing transaction (must belong to user)
-  const existing = await db
-    .select({
-      id: transactions.id,
-      userId: transactions.userId,
-      accountId: transactions.accountId,
-      kind: transactions.kind,
-      amountCents: transactions.amountCents,
-    })
-    .from(transactions)
-    .where(and(eq(transactions.id, id), eq(transactions.userId, userId)))
-    .limit(1);
-
-  if (!existing.length) {
-    return NextResponse.json({ error: "Transaction not found" }, { status: 404 });
-  }
-
-  // Ensure NEW account belongs to the user
-  const acc = await db
-    .select({ id: accounts.id })
-    .from(accounts)
-    .where(and(eq(accounts.id, accountId), eq(accounts.userId, userId)))
-    .limit(1);
-
-  if (!acc.length) {
-    return NextResponse.json({ error: "Invalid account" }, { status: 400 });
-  }
-
-  const old = existing[0];
-  const newAmountCents = toCents(amount);
-
-  // Effect on account balance:
-  // income => +amountCents, expense => -amountCents
-  const oldEffect = old.kind === "income" ? old.amountCents : -old.amountCents;
-  const newEffect = kind === "income" ? newAmountCents : -newAmountCents;
-
-  // 1) Undo old effect from OLD account
-  await updateAccountBalance(old.accountId, -oldEffect);
-
-  // 2) Apply new effect to NEW account
-  await updateAccountBalance(accountId, newEffect);
-
-  // 3) Update transaction row
-  await db
-    .update(transactions)
-    .set({
-      kind,
-      amountCents: newAmountCents,
-      accountId,
-      name,
-      category,
-      date,
-      note,
-    })
-    .where(and(eq(transactions.id, id), eq(transactions.userId, userId)));
 
   return NextResponse.json({ ok: true });
 }
