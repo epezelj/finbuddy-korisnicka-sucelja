@@ -36,6 +36,8 @@ export const transactions = pgTable(
     category: text("category").notNull(),
     date: text("date").notNull(), // "YYYY-MM-DD"
 
+    name: text("name").notNull(),
+
     note: text("note"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },

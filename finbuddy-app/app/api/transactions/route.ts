@@ -98,6 +98,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid account" }, { status: 400 });
   }
 
+  const name = note?.trim() ? note.trim() : category;
+
   const row = {
     id: createId(),
     userId,
@@ -107,6 +109,7 @@ export async function POST(req: Request) {
     category,
     date, // "YYYY-MM-DD"
     note,
+    name,
   };
 
   // Insert the transaction into the database
