@@ -19,6 +19,9 @@
 - Assignment 3: [**Assignment3-Vercel Link**](https://github.com/epezelj/finbuddy-korisnicka-sucelja/tree/main/assignments/assignment3)
 - Assignment 4: [**Assignment4-Figma**](https://github.com/epezelj/finbuddy-korisnicka-sucelja/blob/main/assignments/assignment4/figma.pdf)
 - Assignment 5: [**Assignment5-Vercel Link**](https://github.com/epezelj/finbuddy-korisnicka-sucelja/tree/main/assignments/assignment5)
+- Assignment 6: [**Assignment6-Vercel link**](https://github.com/epezelj/finbuddy-korisnicka-sucelja/blob/main/assignments/assignment6)
+- Assignment 7: [**Assignment7-Review**](https://github.com/epezelj/finbuddy-korisnicka-sucelja/tree/main/assignments/assignment7/)
+
 
 
 

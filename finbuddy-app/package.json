@@ -13,6 +13,7 @@
     "@auth/core": "^0.41.1",
     "@auth/prisma-adapter": "^2.11.1",
     "@contentful/rich-text-html-renderer": "^17.1.6",
+    "@contentful/rich-text-types": "^17.2.5",
     "@paralleldrive/cuid2": "^3.0.4",
     "@supabase/realtime-js": "^2.81.0",
     "@supabase/supabase-js": "^2.81.0",
@@ -27,6 +28,7 @@
     "postgres": "^3.4.7",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "recharts": "^3.7.0",
     "websocket": "^1.0.35"
   },
   "devDependencies": {

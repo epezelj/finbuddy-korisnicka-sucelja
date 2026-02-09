@@ -91,3 +91,22 @@ export async function getPost(slug: string) {
 
   return { fields: item.fields, includes: data.includes };
 }
+
+// /lib/blog.ts
+// Add this next to getPost()
+
+export async function getPosts({ limit = 24 }: { limit?: number } = {}) {
+  const data = await cf<any>("/entries", {
+    content_type: BLOG_POST_TYPE,
+    order: "-sys.createdAt",
+    limit: String(limit),
+    include: "2",
+  });
+
+  const items = data?.items ?? [];
+  return items.map((item: any) => ({
+    fields: item.fields,
+    includes: data.includes,
+  }));
+}
+

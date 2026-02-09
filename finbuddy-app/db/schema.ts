@@ -29,12 +29,14 @@ export const transactions = pgTable(
     id: text("id").primaryKey(),
     userId: text("user_id").notNull(),
 
-    accountId: text("account_id").notNull(), // references accounts.id (optional FK)
-    kind: text("kind").notNull(), // "income" | "expense"
+    accountId: text("account_id").notNull(),
+    kind: text("kind").notNull(),
 
     amountCents: integer("amount_cents").notNull(),
     category: text("category").notNull(),
-    date: text("date").notNull(), // "YYYY-MM-DD"
+    date: text("date").notNull(),
+
+    name: text("name").notNull(),
 
     note: text("note"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -45,6 +47,22 @@ export const transactions = pgTable(
   })
 );
 
+export const categories = pgTable(
+  "categories",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id").notNull(),
+    name: text("name").notNull(),
+    type: text("type").notNull(), //expense ili income
+    color: text("color").notNull().default("#2563EB"),
+    monthlyLimitCents: integer("monthly_limit_cents"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (t) => ({
+    userIdx: index("categories_user_idx").on(t.userId),
+    userNameIdx: index("categories_user_name_idx").on(t.userId, t.name),
+  })
+);
 
 
 
