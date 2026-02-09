@@ -28,16 +28,12 @@ export const transactions = pgTable(
   {
     id: text("id").primaryKey(),
     userId: text("user_id").notNull(),
-
     accountId: text("account_id").notNull(),
     kind: text("kind").notNull(),
-
     amountCents: integer("amount_cents").notNull(),
     category: text("category").notNull(),
     date: text("date").notNull(),
-
     name: text("name").notNull(),
-
     note: text("note"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },

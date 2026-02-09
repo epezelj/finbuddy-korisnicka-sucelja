@@ -6,9 +6,7 @@ import { accounts, transactions } from "@/db/schema";
 import { and, desc, eq } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 
-const key = new TextEncoder().encode(
-  process.env.SESSION_SECRET ?? "dev_secret_change_me"
-);
+const key = new TextEncoder().encode(process.env.SESSION_SECRET ?? "dev_secret_change_me");
 
 async function getUserIdFromSession() {
   const cookieStore = await cookies();
@@ -27,8 +25,7 @@ function toCents(amount: number) {
   return Math.round(amount * 100);
 }
 
-// Helper function to update the account balance
-async function updateAccountBalance(accountId: string, amountCents: number) {
+async function updateAccountBalance(accountId: string, deltaCents: number) {
   const account = await db
     .select({ balanceCents: accounts.balanceCents })
     .from(accounts)
@@ -36,11 +33,8 @@ async function updateAccountBalance(accountId: string, amountCents: number) {
     .limit(1);
 
   if (account.length > 0) {
-    const newBalance = account[0].balanceCents + amountCents; // Update the balance
-    await db
-      .update(accounts)
-      .set({ balanceCents: newBalance })
-      .where(eq(accounts.id, accountId));
+    const newBalance = account[0].balanceCents + deltaCents;
+    await db.update(accounts).set({ balanceCents: newBalance }).where(eq(accounts.id, accountId));
   }
 }
 
@@ -48,15 +42,15 @@ export async function GET() {
   const userId = await getUserIdFromSession();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  // Join accounts so the list can show "Cash/Card" + name
   const rows = await db
     .select({
       id: transactions.id,
+      name: transactions.name, // ✅ include name
       kind: transactions.kind,
       amountCents: transactions.amountCents,
       category: transactions.category,
       date: transactions.date,
-      note: transactions.note,
+      note: transactions.note, // description
       accountId: transactions.accountId,
       accountName: accounts.name,
       accountType: accounts.type,
@@ -79,17 +73,20 @@ export async function POST(req: Request) {
   const kind = body.kind === "income" || body.kind === "expense" ? body.kind : null;
   const amount = typeof body.amount === "number" ? body.amount : null;
   const accountId = typeof body.accountId === "string" ? body.accountId : null;
+
+  // ✅ Name and description are separate things:
+  const name = typeof body.name === "string" ? body.name.trim() : "";
+  const note = typeof body.note === "string" ? body.note.trim() : null; // description
+
   const category = typeof body.category === "string" ? body.category.trim() : "";
   const date = typeof body.date === "string" ? body.date : null;
-  const note = typeof body.note === "string" ? body.note.trim() : null;
 
-  if (!kind || amount === null || !accountId || !category || !date) {
+  if (!kind || amount === null || !accountId || !name || !category || !date) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
 
-  // Ensure the account belongs to the user (prevents posting into someone else’s account)
   const acc = await db
-    .select({ id: accounts.id })
+    .select({ id: accounts.id, name: accounts.name, type: accounts.type })
     .from(accounts)
     .where(and(eq(accounts.id, accountId), eq(accounts.userId, userId)))
     .limit(1);
@@ -98,8 +95,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid account" }, { status: 400 });
   }
 
-  const name = note?.trim() ? note.trim() : category;
-
   const row = {
     id: createId(),
     userId,
@@ -107,20 +102,18 @@ export async function POST(req: Request) {
     kind,
     amountCents: toCents(amount),
     category,
-    date, // "YYYY-MM-DD"
-    note,
-    name,
+    date,
+    note, // description
+    name, // ✅ transaction title
   };
 
-  // Insert the transaction into the database
   await db.insert(transactions).values(row);
 
-  // Update the account balance
-  const amountCents = toCents(amount); // Convert to cents
+  const amountCents = toCents(amount);
   if (kind === "income") {
-    await updateAccountBalance(accountId, amountCents); // Increase balance for income
-  } else if (kind === "expense") {
-    await updateAccountBalance(accountId, -amountCents); // Decrease balance for expense
+    await updateAccountBalance(accountId, amountCents);
+  } else {
+    await updateAccountBalance(accountId, -amountCents);
   }
 
   return NextResponse.json({ ok: true });

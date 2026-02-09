@@ -19,7 +19,6 @@ export default function Page() {
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirmPassword") as string;
 
-    // ✅ client-side check
     if (password !== confirmPassword) {
       setConfirmPasswordError("Passwords do not match");
       return;
@@ -97,7 +96,7 @@ export default function Page() {
               {passwordError && <p className="text-sm text-red-600">{passwordError}</p>}
             </div>
 
-            {/* ✅ Confirm Password */}
+
             <div className="space-y-2">
               <label className="block text-sm font-medium text-slate-700">
                 Confirm Password
