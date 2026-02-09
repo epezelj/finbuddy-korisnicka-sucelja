@@ -10,6 +10,7 @@ export async function cf<T>(path: string, query: Record<string, string> = {}) {
 
   const res = await fetch(url.toString(), {
     headers: { Authorization: `Bearer ${TOKEN}` },
+    cache: "no-store",
     // cache policy po želji:
     // next: { revalidate: 60 },
   });

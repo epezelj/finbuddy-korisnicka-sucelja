@@ -30,7 +30,7 @@ export function Hero() {
                 Get Started Free
               </Link>
               <a
-                href="#features"
+                href="/blog"
                 className="border-2 border-[#2563EB] text-[#2563EB] px-8 py-3 rounded-lg hover:bg-[#2563EB] hover:text-white transition-colors text-center font-semibold"
               >
                 See how it works

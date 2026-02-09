@@ -1,0 +1,198 @@
+.blog {
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  color: #0f172a;
+}
+
+.shell {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 28px 18px 60px;
+}
+
+.blog h1 {
+  font-size: clamp(2rem, 3vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.75rem;
+  font-weight: 800;
+}
+
+.meta {
+  color: #475569;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.lead {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: #334155;
+  margin: 1rem 0 1.75rem;
+}
+
+.heroImg {
+  width: 100%;
+  border-radius: 16px;
+  margin: 1.25rem 0 1.75rem;
+  object-fit: cover;
+  height: 420px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+.contentImg {
+  width: 100%;
+  border-radius: 16px;
+  margin: 1.25rem 0 1.75rem;
+  object-fit: cover;
+  max-height: 520px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
+}
+
+.divider {
+  height: 1px;
+  background: rgba(15, 23, 42, 0.08);
+  margin: 1.25rem 0 0;
+}
+
+.content {
+  font-size: 1.05rem;
+  line-height: 1.85;
+}
+
+.content p {
+  margin: 0 0 1.1rem;
+}
+
+/* Headings spacing */
+.content h2 {
+  margin-top: 4rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.content h3 {
+  margin-top: 3rem;
+  margin-bottom: 0.6rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.content h2:first-child,
+.content h3:first-child {
+  margin-top: 3rem;
+}
+
+.content strong {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.content mark {
+  background: rgba(250, 204, 21, 0.35);
+  padding: 0.05em 0.25em;
+  border-radius: 0.35em;
+}
+
+.content img {
+  width: 100%;
+  border-radius: 14px;
+  margin: 1rem 0 1.5rem;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.10);
+}
+
+/* ✅ Unordered list bullets */
+.content ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin: 0.3rem 0 1rem;
+}
+
+.content ul li {
+  margin: 0.35rem 0;
+}
+
+.content ul ul {
+  list-style: circle;
+  margin-top: 0.35rem;
+}
+
+.content ul li::marker {
+  color: #000;
+}
+
+/* Related section */
+.relatedWrap {
+  margin-top: 3rem;
+}
+
+.relatedTitle {
+  font-size: 1.15rem;
+  font-weight: 900;
+  margin: 0 0 0.9rem;
+  letter-spacing: -0.01em;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 14px;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 860px) {
+  .relatedGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  grid-column: span 4;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  min-height: 100%;
+}
+
+@media (max-width: 860px) {
+  .card {
+    grid-column: span 12;
+  }
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.1);
+}
+
+.cardImg {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.cardBody {
+  padding: 12px 12px 14px;
+}
+
+.cardTitle {
+  font-weight: 900;
+  line-height: 1.25;
+  margin: 0 0 6px;
+}
+
+.cardMeta {
+  color: #475569;
+  font-size: 0.92rem;
+  margin: 0;
+}
