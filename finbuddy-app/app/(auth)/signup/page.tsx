@@ -1,39 +1,50 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { redirect } from "next/navigation";
 
 export default function Page() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault(); 
+    e.preventDefault();
 
     setEmailError(null);
     setPasswordError(null);
+    setConfirmPasswordError(null);
 
-    const formData = new FormData(e.currentTarget); 
+    const formData = new FormData(e.currentTarget);
+
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
+
+    // ✅ client-side check
+    if (password !== confirmPassword) {
+      setConfirmPasswordError("Passwords do not match");
+      return;
+    }
+
     const res = await fetch("/api/signup", {
       method: "POST",
       body: formData,
     });
 
-    const data = await res.json();  
+    const data = await res.json();
 
     if (data.check === "both") {
       setEmailError(data.errorExistEmail);
       setPasswordError(data.errorShortPass);
-    } 
+    }
     if (data.check === "shortPass") {
       setPasswordError(data.error);
-    } 
+    }
     if (data.check === "existEmail") {
       setEmailError(data.error);
-    } 
+    }
     if (data.check === "success") {
       redirect("/signin");
-    } 
-    
+    }
   }
 
   return (
@@ -46,67 +57,70 @@ export default function Page() {
         <div className="rounded-2xl border bg-white/70 p-6 shadow-sm backdrop-blur">
           <form onSubmit={onSubmit} className="space-y-5">
             <div className="space-y-2">
-              <label htmlFor="name" className="block text-sm font-medium text-slate-700">
+              <label className="block text-sm font-medium text-slate-700">
                 Name
               </label>
               <input
-                id="name"
                 name="name"
                 type="text"
                 required
                 autoComplete="name"
-                placeholder="Your name"
-                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+                className="w-full rounded-xl border px-3 py-2"
               />
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+              <label className="block text-sm font-medium text-slate-700">
                 Email
               </label>
               <input
-                id="email"
                 name="email"
                 type="email"
                 required
                 autoComplete="email"
-                placeholder="you@example.com"
-                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+                className="w-full rounded-xl border px-3 py-2"
               />
               {emailError && <p className="text-sm text-red-600">{emailError}</p>}
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+              <label className="block text-sm font-medium text-slate-700">
                 Password
               </label>
               <input
-                id="password"
                 name="password"
                 type="password"
                 required
                 autoComplete="new-password"
-                placeholder="••••••••"
-                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+                className="w-full rounded-xl border px-3 py-2"
               />
               {passwordError && <p className="text-sm text-red-600">{passwordError}</p>}
             </div>
 
+            {/* ✅ Confirm Password */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700">
+                Confirm Password
+              </label>
+              <input
+                name="confirmPassword"
+                type="password"
+                required
+                autoComplete="new-password"
+                className="w-full rounded-xl border px-3 py-2"
+              />
+              {confirmPasswordError && (
+                <p className="text-sm text-red-600">{confirmPasswordError}</p>
+              )}
+            </div>
+
             <button
               type="submit"
-              className="w-full rounded-xl bg-slate-900 px-4 py-2.5 text-white font-semibold shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+              className="w-full rounded-xl bg-slate-900 px-4 py-2.5 text-white font-semibold"
             >
               Sign Up
             </button>
-
           </form>
-
-          <div className="mt-6 text-center text-sm text-slate-600">
-            Already have an account?{" "}
-            <a href="/signin" className="font-medium text-slate-900 underline underline-offset-4">
-              Sign in
-            </a>
-          </div>
         </div>
       </section>
     </main>
