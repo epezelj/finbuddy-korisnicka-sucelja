@@ -79,7 +79,7 @@ export default function SecurityPasswordForm({
       </button>
 
       <div className="text-xs text-gray-500">
-        Log out to see if you managed to change password correctly.
+        Sign out to see if you managed to change password correctly.
       </div>
     </form>
   );
