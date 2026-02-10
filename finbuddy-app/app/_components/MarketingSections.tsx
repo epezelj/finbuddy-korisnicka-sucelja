@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import {
   Receipt,
   PieChart,
@@ -9,6 +11,9 @@ import {
 } from "lucide-react";
 
 export function Hero() {
+  const pathname = usePathname();
+  const isLanding = pathname === "/";
+
   return (
     <section className="bg-gradient-to-b from-white to-[#F9FAFB] py-20 lg:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,19 +27,29 @@ export function Hero() {
               budget with a simple, intuitive finance app.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
                 href="/signup"
                 className="bg-[#2563EB] text-white px-8 py-3 rounded-lg hover:bg-[#1d4ed8] transition-colors text-center font-semibold"
               >
                 Get Started Free
               </Link>
-              <a
-                href="#features"
-                className="border-2 border-[#2563EB] text-[#2563EB] px-8 py-3 rounded-lg hover:bg-[#2563EB] hover:text-white transition-colors text-center font-semibold"
-              >
-                See how it works
-              </a>
+
+              {isLanding ? (
+                <a
+                  href="#features"
+                  className="border-2 border-[#2563EB] text-[#2563EB] px-8 py-3 rounded-lg hover:bg-[#2563EB] hover:text-white transition-colors text-center font-semibold"
+                >
+                  See how it works
+                </a>
+              ) : (
+                <Link
+                  href="/blog"
+                  className="border-2 border-[#2563EB] text-[#2563EB] px-8 py-3 rounded-lg hover:bg-[#2563EB] hover:text-white transition-colors text-center font-semibold"
+                >
+                  See how it works
+                </Link>
+              )}
             </div>
           </div>
 
@@ -169,6 +184,7 @@ export function PersonaSection() {
 }
 
 export function HowItWorks() {
+
   const steps = [
     { icon: UserPlus, title: "Sign Up", step: "01" },
     { icon: Plus, title: "Add expenses and income", step: "02" },

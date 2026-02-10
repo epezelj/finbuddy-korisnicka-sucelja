@@ -10,12 +10,10 @@ const key = new TextEncoder().encode(
 export async function proxy(request: NextRequest) {
   const token = request.cookies.get("session")?.value;
 
-  // Not signed in
   if (!token) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 
-  // Invalid / expired token
   try {
     await jwtVerify(token, key, { algorithms: ["HS256"] });
   } catch {

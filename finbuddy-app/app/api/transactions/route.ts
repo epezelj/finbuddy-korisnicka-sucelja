@@ -45,12 +45,12 @@ export async function GET() {
   const rows = await db
     .select({
       id: transactions.id,
-      name: transactions.name, // ✅ include name
+      name: transactions.name, 
       kind: transactions.kind,
       amountCents: transactions.amountCents,
       category: transactions.category,
       date: transactions.date,
-      note: transactions.note, // description
+      note: transactions.note, 
       accountId: transactions.accountId,
       accountName: accounts.name,
       accountType: accounts.type,
@@ -74,9 +74,8 @@ export async function POST(req: Request) {
   const amount = typeof body.amount === "number" ? body.amount : null;
   const accountId = typeof body.accountId === "string" ? body.accountId : null;
 
-  // ✅ Name and description are separate things:
   const name = typeof body.name === "string" ? body.name.trim() : "";
-  const note = typeof body.note === "string" ? body.note.trim() : null; // description
+  const note = typeof body.note === "string" ? body.note.trim() : null; 
 
   const category = typeof body.category === "string" ? body.category.trim() : "";
   const date = typeof body.date === "string" ? body.date : null;

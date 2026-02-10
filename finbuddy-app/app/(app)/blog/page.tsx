@@ -1,7 +1,6 @@
-// app/blog/page.tsx
-import { listPosts } from "@/lib/blog";
 import BlogClient from "./blogClient";
-
+import { listPosts } from "@/lib/blog";
+import blogPostStyle from "./blogPostStyle.module.css";
 
 
 function blogIndexStyles() {
@@ -71,7 +70,6 @@ function blogIndexStyles() {
       white-space: nowrap;
     }
 
-    /* Featured main article */
     .featured {
       display: grid;
       grid-template-columns: 1.35fr 1fr;
@@ -264,13 +262,13 @@ function blogIndexStyles() {
       color: #475569;
       background: rgba(255,255,255,0.7);
     }
-  `;
+
+`;
 }
 
 export default async function BlogPage() {
   const posts = await listPosts();
 
-  // ✅ Pick the featured post by slug OR title
   const featured =
     posts.find((p) => p.slug === "investing-for-beginners") ??
     posts.find((p) => p.title?.toLowerCase().includes("investing for beginners"));
@@ -287,8 +285,9 @@ export default async function BlogPage() {
           </p>
         </header>
 
-        {/* Client component handles search + rendering */}
-        <BlogClient posts={posts} featuredSlug={featured?.slug ?? null} />
+        <BlogClient posts={posts} featuredSlug={featured?.slug ?? null} />      
+        
+
         
         {posts.length === 0 && (
           <div className="empty">

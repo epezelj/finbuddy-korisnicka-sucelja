@@ -10,7 +10,6 @@ type Includes = {
 export function richTextToHtml(richText: any, includes?: Includes) {
   return documentToHtmlString(richText, {
     renderNode: {
-      // If you ever embed raw assets directly
       [BLOCKS.EMBEDDED_ASSET]: (node) => {
         const assetId = node?.data?.target?.sys?.id;
         const asset = includes?.Asset?.find((a: any) => a?.sys?.id === assetId);
@@ -19,21 +18,18 @@ export function richTextToHtml(richText: any, includes?: Includes) {
         return `<img src="${url}" alt="" style="max-width:100%; height:auto; border-radius:12px;" />`;
       },
 
-      // ✅ THIS is what you need for "component - Rich image"
       [BLOCKS.EMBEDDED_ENTRY]: (node) => {
         const entryId = node?.data?.target?.sys?.id;
         const entry = includes?.Entry?.find((e: any) => e?.sys?.id === entryId);
 
         if (!entry) return "";
 
-        // Your component likely has a linked Asset field (often called "image")
         const linkedAsset =
           entry?.fields?.image ||
           entry?.fields?.asset ||
           entry?.fields?.media ||
           entry?.fields?.file;
 
-        // If the linkedAsset is a Link, it might need resolving via includes.Asset
         const assetId = linkedAsset?.sys?.id;
         const asset =
           linkedAsset?.fields ? linkedAsset : includes?.Asset?.find((a: any) => a?.sys?.id === assetId);

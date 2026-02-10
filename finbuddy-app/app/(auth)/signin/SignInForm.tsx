@@ -4,31 +4,31 @@ import { useState } from "react";
 import { redirect } from "next/navigation";
 
 export default function SignInForm() {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-      console.log("Test");
-    e.preventDefault(); 
+  const [showPassword, setShowPassword] = useState(false);
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    console.log("Test");
+    e.preventDefault();
 
     setErrorMessage(null);
 
-    const formData = new FormData(e.currentTarget); 
-    const res = await fetch("/api/signin", { 
-            method: "POST",
-            body: formData, 
+    const formData = new FormData(e.currentTarget);
+    const res = await fetch("/api/signin", {
+      method: "POST",
+      body: formData,
     });
 
-    const data = await res.json(); 
+    const data = await res.json();
 
     if (!data?.check) {
-          console.log("deb2");
-
-      setErrorMessage(data.error);  
+      console.log("deb2");
+      setErrorMessage(data.error);
       return;
     }
 
     redirect("/home");
-    
   }
 
   return (
@@ -50,26 +50,39 @@ export default function SignInForm() {
         />
       </div>
 
-  
       <div className="space-y-2">
         <label htmlFor="password" className="block text-sm font-medium text-slate-700">
           Password
         </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          autoComplete="current-password"
-          placeholder="••••••••"
-          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
-          aria-invalid={errorMessage ? "true" : "false"}
-          aria-describedby={errorMessage ? "error-message" : undefined}
-        />
+
+        <div className="relative">
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            required
+            autoComplete="current-password"
+            placeholder="••••••••"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 pr-16 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+            aria-invalid={errorMessage ? "true" : "false"}
+            aria-describedby={errorMessage ? "error-message" : undefined}
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowPassword((s) => !s)}
+            className="absolute inset-y-0 right-2 my-auto h-8 rounded-lg px-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+            aria-pressed={showPassword}
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
       </div>
 
       {errorMessage && (
-        <p id="error-message" className="text-sm text-red-600">{errorMessage}</p>
+        <p id="error-message" className="text-sm text-red-600">
+          {errorMessage}
+        </p>
       )}
 
       <button

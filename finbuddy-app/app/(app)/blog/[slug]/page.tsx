@@ -5,7 +5,6 @@ import { richTextToHtml } from "@/lib/content-render";
 import styles from "./blogPostStyle.module.css";
 
 
-// Find first embedded image inside Contentful Rich Text
 function findFirstEmbeddedAssetId(richText: any): string | undefined {
   if (!richText) return undefined;
 
@@ -29,7 +28,6 @@ function findFirstEmbeddedAssetId(richText: any): string | undefined {
   return walk(richText);
 }
 
-// Optional: lead from first paragraph
 function getFirstParagraphText(richText: any): string | undefined {
   try {
     const firstPara = richText?.content?.find((n: any) => n.nodeType === "paragraph");
@@ -40,8 +38,7 @@ function getFirstParagraphText(richText: any): string | undefined {
   }
 }
 
-// Very simple “relatedness”: shared tags if present; otherwise latest posts.
-// Adjust fields used here to match your Contentful model (tags/category/topic).
+
 function scoreRelated(current: any, candidate: any) {
   const currentTags: string[] = current?.fields?.tags ?? current?.fields?.categories ?? [];
   const candTags: string[] = candidate?.fields?.tags ?? candidate?.fields?.categories ?? [];
@@ -53,7 +50,6 @@ function scoreRelated(current: any, candidate: any) {
     return score;
   }
 
-  // fallback: weak signal using title words overlap
   const a = String(current?.fields?.title ?? "").toLowerCase().split(/\W+/).filter(Boolean);
   const b = String(candidate?.fields?.title ?? "").toLowerCase().split(/\W+/).filter(Boolean);
   const aset = new Set(a);
@@ -74,27 +70,23 @@ export default async function BlogPostPage({
 
   const fields = post.fields;
 
-  // ✅ Featured image (separate field)
   const featuredAssetId = fields.featuredImage?.sys?.id;
   const featuredImageUrl = resolveAssetUrlById(post.includes, featuredAssetId);
 
   const featuredAsset = post.includes?.Asset?.find((a: any) => a.sys.id === featuredAssetId);
   const featuredImageAlt = featuredAsset?.fields?.title || fields.title;
 
-  // ✅ Content image (first image embedded in Rich Text)
   const firstContentAssetId = findFirstEmbeddedAssetId(fields.content);
   const contentImageUrl = resolveAssetUrlById(post.includes, firstContentAssetId);
 
-  // Render Rich Text to HTML
   const contentHtml = fields.content
     ? richTextToHtml(fields.content, post.includes)
     : "<p>No content available</p>";
 
   const lead = getFirstParagraphText(fields.content);
 
-  // ✅ Related posts (top 3)
-  // NOTE: This assumes you have getPosts() in /lib/blog that returns an array of posts with fields.slug + fields.title
-  const allPosts = await getPosts({ limit: 20 }); // adjust to your API
+  
+  const allPosts = await getPosts({ limit: 20 }); 
   const related = (allPosts ?? [])
     .filter((p: any) => p?.fields?.slug && p.fields.slug !== slug)
     .map((p: any) => ({ post: p, score: scoreRelated(post, p) }))

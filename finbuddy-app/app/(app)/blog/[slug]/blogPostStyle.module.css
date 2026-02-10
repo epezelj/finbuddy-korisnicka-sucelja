@@ -64,7 +64,6 @@
   margin: 0 0 1.1rem;
 }
 
-/* Headings spacing */
 .content h2 {
   margin-top: 4rem;
   margin-bottom: 0.75rem;
@@ -103,7 +102,6 @@
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.10);
 }
 
-/* ✅ Unordered list bullets */
 .content ul {
   list-style: disc;
   padding-left: 1.25rem;
@@ -123,7 +121,6 @@
   color: #000;
 }
 
-/* Related section */
 .relatedWrap {
   margin-top: 3rem;
 }

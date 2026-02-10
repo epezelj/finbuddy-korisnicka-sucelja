@@ -35,7 +35,6 @@ export default function BlogIndexClient({
           return hay.includes(q);
         });
 
-    // Also filter featured when searching (optional, feels natural)
     const featuredMatches =
       !q || !featuredPost
         ? featuredPost
@@ -62,7 +61,6 @@ export default function BlogIndexClient({
         <div className="hint">{resultsCount} results</div>
       </div>
 
-      {/* Featured main article */}
       {featured && (
         <Link href={`/blog/${featured.slug}`} className="featured" aria-label="Featured article">
           {featured.featuredImageUrl ? (
@@ -88,7 +86,6 @@ export default function BlogIndexClient({
         </Link>
       )}
 
-      {/* Posts grid */}
       <section className="grid" aria-label="Blog posts">
         {filtered.map((p) => (
           <Link key={p.id} href={`/blog/${p.slug}`} className="card">

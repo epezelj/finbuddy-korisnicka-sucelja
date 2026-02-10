@@ -1,7 +1,6 @@
-// lib/contentful.ts
 const SPACE = process.env.CONTENTFUL_SPACE_ID!;
 const ENV = process.env.CONTENTFUL_ENVIRONMENT || "master";
-const TOKEN = process.env.CONTENTFUL_DELIVERY_TOKEN!; // Delivery token (read-only)
+const TOKEN = process.env.CONTENTFUL_DELIVERY_TOKEN!; 
 const BASE = `https://cdn.contentful.com/spaces/${SPACE}/environments/${ENV}`;
 
 export async function cf<T>(path: string, query: Record<string, string> = {}) {

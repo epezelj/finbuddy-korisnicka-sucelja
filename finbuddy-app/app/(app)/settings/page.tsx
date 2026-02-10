@@ -1,4 +1,3 @@
-// app/(app)/settings/page.tsx
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
@@ -128,7 +127,6 @@ export default async function SettingsPage({ searchParams }: { searchParams: Sea
           </div>
         </section>
 
-        {/* SECURITY */}
         <section className="rounded-2xl border bg-white p-6 shadow-sm">
           <div className="mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Security</h2>

@@ -1,8 +1,5 @@
-// db/schema.ts
 import {pgTable, text, integer, timestamp, index, uniqueIndex, PgTable} from "drizzle-orm/pg-core";
 
-
-// Define your tables schema directly here
 export const users = pgTable("users", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   email: text("email").notNull().unique(),
@@ -49,7 +46,7 @@ export const categories = pgTable(
     id: text("id").primaryKey(),
     userId: text("user_id").notNull(),
     name: text("name").notNull(),
-    type: text("type").notNull(), //expense ili income
+    type: text("type").notNull(), 
     color: text("color").notNull().default("#2563EB"),
     monthlyLimitCents: integer("monthly_limit_cents"),
     createdAt: timestamp("created_at").notNull().defaultNow(),

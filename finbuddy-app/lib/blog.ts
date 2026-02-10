@@ -1,4 +1,3 @@
-// lib/blog.ts
 import { cf, toHttps } from "@/lib/contentful";
 
 const BLOG_POST_TYPE = "pageBlogPost";
@@ -19,16 +18,13 @@ export function resolveAssetUrlById(includes: any, assetId?: string) {
 function findFirstEmbeddedAssetId(richText: any): string | undefined {
   if (!richText) return undefined;
 
-  // Rich Text is a tree: walk recursively
   const walk = (node: any): string | undefined => {
     if (!node) return undefined;
 
-    // Contentful rich text image
     if (node.nodeType === "embedded-asset-block") {
       return node?.data?.target?.sys?.id;
     }
 
-    // Recurse children
     if (Array.isArray(node.content)) {
       for (const child of node.content) {
         const found = walk(child);
@@ -65,14 +61,12 @@ export async function listPosts() {
 
     featuredImageUrl: resolveAssetUrlById(data.includes, featuredAssetId),
 
-    // ✅ "normal" image from Rich Text (first embedded image)
     contentImageUrl: resolveAssetUrlById(data.includes, firstContentAssetId),
   };
 });
 
 }
 
-// lib/blog.ts
 export async function getPost(slug: string) {
   const data = await cf<any>("/entries", {
     content_type: BLOG_POST_TYPE,
@@ -92,8 +86,7 @@ export async function getPost(slug: string) {
   return { fields: item.fields, includes: data.includes };
 }
 
-// /lib/blog.ts
-// Add this next to getPost()
+
 
 export async function getPosts({ limit = 24 }: { limit?: number } = {}) {
   const data = await cf<any>("/entries", {

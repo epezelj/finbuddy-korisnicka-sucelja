@@ -14,7 +14,7 @@ type Transaction = {
   kind: "income" | "expense";
   amountCents: number;
   category: string;
-  date: string; // YYYY-MM-DD
+  date: string; 
   note: string | null;
   accountId: string;
   accountName: string;
@@ -42,7 +42,6 @@ export default function TransactionsPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [amountError, setAmountError] = useState<string | null>(null);
 
-  // Form state
   const [kind, setKind] = useState<"expense" | "income">("expense");
   const [name, setName] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
@@ -51,13 +50,11 @@ export default function TransactionsPage() {
   const [date, setDate] = useState<string>(() => new Date().toISOString().slice(0, 10));
   const [note, setNote] = useState<string>("");
 
-  // ✅ Filters
   const [qName, setQName] = useState<string>("");
   const [qCategory, setQCategory] = useState<string>("");
-  const [startDate, setStartDate] = useState<string>(""); // YYYY-MM-DD
-  const [endDate, setEndDate] = useState<string>(""); // YYYY-MM-DD
+  const [startDate, setStartDate] = useState<string>(""); 
+  const [endDate, setEndDate] = useState<string>(""); 
 
-  // Load more
   const PAGE_SIZE = 5;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
@@ -65,12 +62,10 @@ export default function TransactionsPage() {
     return txs.reduce((acc, t) => acc + (t.kind === "income" ? t.amountCents : -t.amountCents), 0);
   }, [txs]);
 
-  // Newest first
   const sortedTxs = useMemo(() => {
     return [...txs].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
   }, [txs]);
 
-  // ✅ Filtered list
   const filteredTxs = useMemo(() => {
     const nameQ = qName.trim().toLowerCase();
     const catQ = qCategory.trim().toLowerCase();
@@ -82,7 +77,6 @@ export default function TransactionsPage() {
       const matchesCategory =
         !catQ || (t.category || "").toLowerCase().includes(catQ);
 
-      // date range (YYYY-MM-DD compares lexicographically)
       const matchesStart = !startDate || t.date >= startDate;
       const matchesEnd = !endDate || t.date <= endDate;
 
@@ -136,20 +130,16 @@ export default function TransactionsPage() {
 
   useEffect(() => {
     loadAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Reset pagination when list changes
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
   }, [txs.length]);
 
-  // ✅ Reset pagination when filters change
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
   }, [qName, qCategory, startDate, endDate]);
 
-  // ✅ Enforce endDate >= startDate (start should be older than end)
   useEffect(() => {
     if (startDate && endDate && endDate < startDate) {
       setEndDate(startDate);
@@ -230,7 +220,6 @@ export default function TransactionsPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
-      {/* Header */}
       <div className="mb-8 flex items-center justify-between gap-4 bg-blue-600 text-white p-4 rounded-t-xl">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Transactions</h1>
@@ -248,7 +237,6 @@ export default function TransactionsPage() {
         </div>
       ) : null}
 
-      {/* Add Transaction Form */}
       <form onSubmit={addTransaction} className="mb-6 rounded-xl border bg-gray-50 p-6 shadow-lg">
         <div className="grid gap-4 md:grid-cols-6">
           <div>
@@ -355,7 +343,6 @@ export default function TransactionsPage() {
         ) : null}
       </form>
 
-      {/* ✅ Filters */}
       <div className="mb-6 rounded-xl border bg-white p-6 shadow-lg">
         <div className="mb-3 text-sm font-semibold text-gray-900">Search & Filters</div>
         <div className="grid gap-4 md:grid-cols-4">
@@ -394,7 +381,7 @@ export default function TransactionsPage() {
             <input
               type="date"
               value={endDate}
-              min={startDate || undefined} // prevents endDate older than startDate
+              min={startDate || undefined} 
               onChange={(e) => setEndDate(e.target.value)}
               className="mt-1 w-full rounded-lg border border-blue-300 px-3 py-2 focus:ring-4 focus:ring-blue-500"
             />
@@ -422,7 +409,6 @@ export default function TransactionsPage() {
         </div>
       </div>
 
-      {/* Transactions List */}
       <div className="rounded-xl border border-blue-300 bg-white shadow-lg overflow-hidden">
         <div className="border-b px-6 py-4 text-sm font-semibold text-gray-900 flex items-center justify-between">
           <span>All Transactions</span>

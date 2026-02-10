@@ -13,7 +13,7 @@ export default function SignOut() {
 
       if (!data.isSession) {
         console.log("TEST");
-        redirect("/signin");
+        redirect("/");
       } else {
         alert("Failed to sign out");
       }

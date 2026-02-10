@@ -42,7 +42,6 @@ export function Navigation() {
             <span className="font-extrabold tracking-tight text-xl">FinBuddy</span>
           </Link>
 
-          {/* Desktop nav */}
           <nav className="hidden lg:block">
             <ul className="flex items-center gap-6">
               {pages
@@ -71,9 +70,7 @@ export function Navigation() {
             </ul>
           </nav>
 
-          {/* Right side */}
           <div className="flex items-center gap-3">
-            {/* Sign Out as button (desktop) */}
             <Link
               href="/signout"
               className="hidden lg:inline-flex bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition font-semibold"
@@ -81,7 +78,6 @@ export function Navigation() {
               Sign Out
             </Link>
 
-            {/* Mobile menu button */}
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
@@ -94,7 +90,6 @@ export function Navigation() {
           </div>
         </div>
 
-        {/* Mobile dropdown */}
         {open ? (
           <div className="lg:hidden pb-4">
             <div className="rounded-xl bg-white/10 p-3">
