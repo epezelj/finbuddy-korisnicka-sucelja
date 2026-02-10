@@ -88,45 +88,47 @@ export default function TransactionsPage() {
   const canLoadMore = visibleCount < filteredTxs.length;
 
   async function loadAll() {
-    setLoading(true);
-    setLoadError(null);
+  setLoading(true);
+  setLoadError(null);
 
-    try {
-      const aRes = await fetch("/api/accounts", { cache: "no-store" });
-      if (aRes.status === 401) {
-        setLoadError("You are not signed in.");
-        setAccounts([]);
-        setTxs([]);
-        setLoading(false);
-        return;
-      }
+  try {
+    const [aRes, tRes] = await Promise.all([
+      fetch("/api/accounts", { cache: "no-store" }),
+      fetch("/api/transactions", { cache: "no-store" }),
+    ]);
 
-      if (!aRes.ok) {
-        setLoadError("Failed to load accounts.");
-        setAccounts([]);
-      } else {
-        const aJson = await aRes.json();
-        const accs: Account[] = aJson.accounts ?? [];
-        setAccounts(accs);
-        if (!accountId && accs.length) setAccountId(accs[0].id);
-      }
-
-      const tRes = await fetch("/api/transactions", { cache: "no-store" });
-      if (!tRes.ok) {
-        setLoadError((prev) => prev ?? "Failed to load transactions.");
-        setTxs([]);
-      } else {
-        const tJson = await tRes.json();
-        setTxs(tJson.transactions ?? []);
-      }
-    } catch {
-      setLoadError("Network error while loading data.");
+    if (aRes.status === 401 || tRes.status === 401) {
+      setLoadError("You are not signed in.");
       setAccounts([]);
       setTxs([]);
-    } finally {
-      setLoading(false);
+      return;
     }
+
+    // Parse JSON in parallel too (faster)
+    const [aJson, tJson] = await Promise.all([
+      aRes.ok ? aRes.json() : Promise.resolve({ accounts: [] }),
+      tRes.ok ? tRes.json() : Promise.resolve({ transactions: [] }),
+    ]);
+
+    if (!aRes.ok) setLoadError("Failed to load accounts.");
+    if (!tRes.ok) setLoadError((prev) => prev ?? "Failed to load transactions.");
+
+    const accs: Account[] = aJson.accounts ?? [];
+    setAccounts(accs);
+
+    // Don’t depend on stale accountId
+    setAccountId((prev) => prev || (accs[0]?.id ?? ""));
+
+    setTxs(tJson.transactions ?? []);
+  } catch {
+    setLoadError("Network error while loading data.");
+    setAccounts([]);
+    setTxs([]);
+  } finally {
+    setLoading(false);
   }
+}
+
 
   useEffect(() => {
     loadAll();
