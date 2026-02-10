@@ -63,7 +63,7 @@ export default function SignUpForm() {
           type="text"
           required
           autoComplete="name"
-          className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none focus:ring-2 focus:ring-slate-300"
+          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 pr-16 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
           placeholder="Your name"
         />
       </div>
@@ -75,7 +75,7 @@ export default function SignUpForm() {
           type="email"
           required
           autoComplete="email"
-          className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none focus:ring-2 focus:ring-slate-300"
+          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 pr-16 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
           placeholder="you@example.com"
         />
         {emailError && <p className="text-sm text-red-600">{emailError}</p>}
@@ -90,7 +90,7 @@ export default function SignUpForm() {
             type={showPassword ? "text" : "password"}
             required
             autoComplete="new-password"
-            className="w-full rounded-xl border border-slate-200 px-3 py-2 pr-16 outline-none focus:ring-2 focus:ring-slate-300"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 pr-16 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
             placeholder="••••••••"
           />
           <button
@@ -117,7 +117,7 @@ export default function SignUpForm() {
             type={showPassword ? "text" : "password"}
             required
             autoComplete="new-password"
-            className="w-full rounded-xl border border-slate-200 px-3 py-2 pr-16 outline-none focus:ring-2 focus:ring-slate-300"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
             placeholder="••••••••"
           />
           <button
@@ -144,7 +144,7 @@ export default function SignUpForm() {
 
       <p className="text-center text-sm text-slate-600">
         Already have an account?{" "}
-        <Link href="/signin" className="font-semibold text-slate-900 underline">
+        <Link href="/signin" className="font-medium text-slate-900 underline underline-offset-4">
           Sign in
         </Link>
       </p>

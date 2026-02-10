@@ -44,7 +44,7 @@ export default function SignInForm() {
           required
           autoComplete="email"
           placeholder="you@example.com"
-          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 pr-16 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
           aria-invalid={errorMessage ? "true" : "false"}
           aria-describedby={errorMessage ? "error-message" : undefined}
         />

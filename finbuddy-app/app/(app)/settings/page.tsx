@@ -5,6 +5,8 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getSessionFromToken } from "@/lib/auth-node";
+import PasswordForm from "./passwordForm";
+
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -138,48 +140,7 @@ export default async function SettingsPage({
             <p className="text-sm text-gray-600">Change your password.</p>
           </div>
 
-          <form action={changePassword} className="space-y-4">
-            <div>
-              <label className="text-xs font-medium text-gray-600">Current password</label>
-              <input
-                name="currentPassword"
-                type="password"
-                className="mt-1 w-full rounded-lg border px-3 py-2"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-medium text-gray-600">New password</label>
-              <input
-                name="newPassword"
-                type="password"
-                className="mt-1 w-full rounded-lg border px-3 py-2"
-                placeholder="At least 6 characters"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-medium text-gray-600">Confirm new password</label>
-              <input
-                name="confirmPassword"
-                type="password"
-                className="mt-1 w-full rounded-lg border px-3 py-2"
-                placeholder="Repeat new password"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700"
-            >
-              Update password
-            </button>
-
-            <div className="text-xs text-gray-500">
-              Log out to see if you managed to change password correctly.
-            </div>
-          </form>
+          <PasswordForm action={changePassword} />
         </section>
       </div>
     </main>
