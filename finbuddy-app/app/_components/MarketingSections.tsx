@@ -1,14 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-import {
-  Receipt,
-  PieChart,
-  Target,
-  UserPlus,
-  Plus,
-  Eye,
-} from "lucide-react";
+import { Receipt, PieChart, Target, UserPlus, Plus, Eye } from "lucide-react";
 
 export function Hero() {
   const pathname = usePathname();
@@ -22,18 +16,21 @@ export function Hero() {
             <h1 className="text-[#111827] mb-6 text-5xl font-extrabold leading-tight">
               Understand where your money goes — without stress.
             </h1>
+
             <p className="text-[#6B7280] mb-8 max-w-2xl mx-auto lg:mx-0">
               Track expenses, visualize spending, and stay in control of your
               budget with a simple, intuitive finance app.
             </p>
 
-             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link
-                href="/signup"
-                className="bg-[#2563EB] text-white px-8 py-3 rounded-lg hover:bg-[#1d4ed8] transition-colors text-center font-semibold"
-              >
-                Get Started Free
-              </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              {isLanding && (
+                <Link
+                  href="/signup"
+                  className="bg-[#2563EB] text-white px-8 py-3 rounded-lg hover:bg-[#1d4ed8] transition-colors text-center font-semibold"
+                >
+                  Get Started Free
+                </Link>
+              )}
 
               {isLanding ? (
                 <a
@@ -96,10 +93,11 @@ export function Features() {
         <h2 className="text-[#111827] text-center mb-12 text-3xl font-extrabold">
           Everything you need to manage your finances
         </h2>
-        
+
         <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
           {features.map((feature, index) => {
             const Icon = feature.icon;
+
             return (
               <div
                 key={index}
@@ -127,7 +125,8 @@ export function PersonaSection() {
   const personas = [
     {
       title: "Students",
-      description: "Keep track of daily spending like food, coffee, and transport.",
+      description:
+        "Keep track of daily spending like food, coffee, and transport.",
       image:
         "https://images.unsplash.com/photo-1714115314647-1efb3d78bb11?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMHN0dWRlbnQlMjBjb2ZmZWV8ZW58MXx8fHwxNzY1NzM1MDI2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
       accent: "#2563EB",
@@ -170,9 +169,13 @@ export function PersonaSection() {
               </div>
 
               <div className="p-6">
-                <h3 className="mb-3 text-xl font-bold" style={{ color: persona.accent }}>
+                <h3
+                  className="mb-3 text-xl font-bold"
+                  style={{ color: persona.accent }}
+                >
                   {persona.title}
                 </h3>
+
                 <p className="text-[#6B7280]">{persona.description}</p>
               </div>
             </div>
@@ -184,7 +187,6 @@ export function PersonaSection() {
 }
 
 export function HowItWorks() {
-
   const steps = [
     { icon: UserPlus, title: "Sign Up", step: "01" },
     { icon: Plus, title: "Add expenses and income", step: "02" },
@@ -201,6 +203,7 @@ export function HowItWorks() {
         <div className="grid md:grid-cols-3 gap-12">
           {steps.map((step, index) => {
             const Icon = step.icon;
+
             return (
               <div key={index} className="relative text-center">
                 <div className="text-[#2563EB] opacity-20 mb-4 text-6xl font-extrabold">
@@ -211,7 +214,9 @@ export function HowItWorks() {
                   <Icon className="w-10 h-10 text-white" />
                 </div>
 
-                <h3 className="text-[#111827] text-lg font-semibold">{step.title}</h3>
+                <h3 className="text-[#111827] text-lg font-semibold">
+                  {step.title}
+                </h3>
 
                 {index < steps.length - 1 && (
                   <div className="hidden md:block absolute top-24 left-1/2 w-full h-0.5 bg-[#2563EB] opacity-20" />
@@ -226,6 +231,9 @@ export function HowItWorks() {
 }
 
 export function FinalCTA() {
+  const pathname = usePathname();
+  const isLanding = pathname === "/";
+
   return (
     <section className="bg-gradient-to-r from-[#2563EB] to-[#1d4ed8] py-20 shadow-2xl">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -233,12 +241,14 @@ export function FinalCTA() {
           Start making smarter money decisions today.
         </h2>
 
-        <Link
-          href="/signup"
-          className="inline-block bg-white text-[#2563EB] px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
-        >
-          Get Started
-        </Link>
+        {isLanding && (
+          <Link
+            href="/signup"
+            className="inline-block bg-white text-[#2563EB] px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
+          >
+            Get Started
+          </Link>
+        )}
       </div>
     </section>
   );

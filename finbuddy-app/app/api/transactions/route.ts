@@ -102,8 +102,8 @@ export async function POST(req: Request) {
     amountCents: toCents(amount),
     category,
     date,
-    note, // description
-    name, // ✅ transaction title
+    note,
+    name, 
   };
 
   await db.insert(transactions).values(row);

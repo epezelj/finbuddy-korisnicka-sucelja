@@ -21,7 +21,11 @@ function safeDecode(s: string) {
   }
 }
 
-export default async function SettingsPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<SearchParams>;
+}) {
   const cookieStore = await cookies();
   const token = cookieStore.get("session")?.value;
 
@@ -32,8 +36,10 @@ export default async function SettingsPage({ searchParams }: { searchParams: Sea
 
   if (!user?.id) redirect("/signin");
 
-  const ok = getOne(searchParams, "ok");
-  const err = getOne(searchParams, "err");
+  const sp = (await searchParams) ?? {};
+
+  const ok = getOne(sp, "ok");
+  const err = getOne(sp, "err");
 
   async function changePassword(formData: FormData) {
     "use server";
@@ -103,7 +109,6 @@ export default async function SettingsPage({ searchParams }: { searchParams: Sea
       ) : null}
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/* PROFILE */}
         <section className="rounded-2xl border bg-white p-6 shadow-sm">
           <div className="mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Profile</h2>

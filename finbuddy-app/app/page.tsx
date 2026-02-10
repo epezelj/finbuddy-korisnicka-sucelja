@@ -1,7 +1,6 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { jwtVerify } from "jose";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,6 +10,24 @@ import {
   HowItWorks,
   FinalCTA,
 } from "./_components/MarketingSections";
+
+const key = new TextEncoder().encode(
+  process.env.SESSION_SECRET ?? "dev_secret_change_me"
+);
+
+async function isLoggedIn(): Promise<boolean> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("session")?.value;
+  if (!token) return false;
+
+  try {
+    await jwtVerify(token, key, { algorithms: ["HS256"],
+  clockTolerance: 15, });
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 function LandingNavigation() {
   return (
@@ -72,46 +89,19 @@ function LandingNavigation() {
   );
 }
 
-export default function LandingPage() {
-  const router = useRouter();
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const res = await fetch("/api/home", { cache: "no-store" });
-        
-        if (res.ok) {
-          router.push("/home");
-          return;
-        }
-
-        setIsCheckingAuth(false);
-      } catch (error) {
-        setIsCheckingAuth(false);
-      }
-    }
-
-    checkAuth();
-  }, [router]);
-
-  if (isCheckingAuth) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F9FAFB]">
-        <div className="text-gray-600">Loading...</div>
-      </div>
-    );
-  }
-
-  function FooterLandingPage() {
+function FooterLandingPage() {
   return (
-        <footer className="bg-[#111827] text-white py-12">
-            <div className="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
-              <p>© 2026 FinBuddy. All rights reserved.</p>
-            </div>
+    <footer className="bg-[#111827] text-white py-12">
+      <div className="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
+        <p>© 2026 FinBuddy. All rights reserved.</p>
+      </div>
     </footer>
-  )
-  }
+  );
+}
+
+export default async function LandingPage() {
+  const loggedIn = await isLoggedIn();
+  if (loggedIn) redirect("/home");
 
   return (
     <>
@@ -122,7 +112,7 @@ export default function LandingPage() {
         <PersonaSection />
         <HowItWorks />
         <FinalCTA />
-        <FooterLandingPage/>
+        <FooterLandingPage />
       </div>
     </>
   );
