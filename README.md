@@ -9,8 +9,8 @@
 
 ### Semester Project
 
-- Production version: [**App link**](https://finbuddy-korisnicka-sucelja.vercel.app/)
-- Final report: 
+- Production version: [**Production version**](https://finbuddy-korisnicka-sucelja.vercel.app/)
+- Final report: [**Final report**](https://www.notion.so/CI-Report-FinBuddy-30314898fafe801d8d72df00408cb01f)
 
 ### Semester Assignments
 
