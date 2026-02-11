@@ -10,7 +10,9 @@ export default function SignUpForm() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
+
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -82,7 +84,9 @@ export default function SignUpForm() {
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-slate-700">Password</label>
+        <label className="block text-sm font-medium text-slate-700">
+          Password
+        </label>
 
         <div className="relative">
           <input
@@ -103,9 +107,12 @@ export default function SignUpForm() {
           </button>
         </div>
 
-        {passwordError && <p className="text-sm text-red-600">{passwordError}</p>}
+        {passwordError && (
+          <p className="text-sm text-red-600">{passwordError}</p>
+        )}
       </div>
 
+      {/* Confirm Password */}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-slate-700">
           Confirm password
@@ -114,19 +121,19 @@ export default function SignUpForm() {
         <div className="relative">
           <input
             name="confirmPassword"
-            type={showPassword ? "text" : "password"}
+            type={showConfirmPassword ? "text" : "password"}
             required
             autoComplete="new-password"
-            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 pr-16 text-slate-900 placeholder-slate-400 shadow-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
             placeholder="••••••••"
           />
           <button
             type="button"
-            onClick={() => setShowPassword((s) => !s)}
+            onClick={() => setShowConfirmPassword((s) => !s)}
             className="absolute inset-y-0 right-2 my-auto h-8 rounded-lg px-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
-            aria-pressed={showPassword}
+            aria-pressed={showConfirmPassword}
           >
-            {showPassword ? "Hide" : "Show"}
+            {showConfirmPassword ? "Hide" : "Show"}
           </button>
         </div>
 
@@ -144,7 +151,10 @@ export default function SignUpForm() {
 
       <p className="text-center text-sm text-slate-600">
         Already have an account?{" "}
-        <Link href="/signin" className="font-medium text-slate-900 underline underline-offset-4">
+        <Link
+          href="/signin"
+          className="font-medium text-slate-900 underline underline-offset-4"
+        >
           Sign in
         </Link>
       </p>

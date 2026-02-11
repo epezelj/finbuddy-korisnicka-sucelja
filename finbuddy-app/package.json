@@ -19,6 +19,7 @@
     "@supabase/supabase-js": "^2.81.0",
     "bcrypt": "^6.0.0",
     "contentful": "^11.10.3",
+    "date-fns": "^4.1.0",
     "drizzle-kit": "^0.31.7",
     "drizzle-orm": "^0.44.7",
     "lucide-react": "^0.561.0",
@@ -27,6 +28,7 @@
     "pg": "^8.16.3",
     "postgres": "^3.4.7",
     "react": "19.2.0",
+    "react-datepicker": "^9.1.0",
     "react-dom": "19.2.0",
     "recharts": "^3.7.0",
     "websocket": "^1.0.35"

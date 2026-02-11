@@ -61,7 +61,7 @@ export async function signup(formData: FormData) {
       name: users.name,
     });
 
-  const expires = new Date(Date.now() + 15 * 60 * 1000);
+  const expires = new Date(Date.now() + 600 * 60 * 1000);
   const token = await encrypt({
     user: created,
     expAt: expires.toISOString(),
@@ -92,7 +92,7 @@ export async function signin(formData: FormData) {
     return { check: false, error: "Email or password are incorrect" };
   }
 
-  const expires = new Date(Date.now() + 15 * 60 * 1000);
+  const expires = new Date(Date.now() + 600 * 60 * 1000);
   const token = await encrypt({
     user: {
       id: user.id,

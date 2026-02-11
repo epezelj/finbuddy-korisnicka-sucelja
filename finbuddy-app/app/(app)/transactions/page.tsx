@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 type Account = {
   id: string;
@@ -33,27 +35,62 @@ function paymentLabel(accountType: string) {
   return t ? t.charAt(0).toUpperCase() + t.slice(1) : "—";
 }
 
+function toISODate(d: Date) {
+  const yyyy = String(d.getFullYear());
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function fmtDMY(iso: string) {
+  if (!iso) return "—";
+  const d = new Date(iso.length === 10 ? `${iso}T00:00:00` : iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+function isoToDate(iso: string) {
+  if (!iso) return null;
+  if (iso.length >= 10) {
+    const [y, m, d] = iso.slice(0, 10).split("-").map(Number);
+    if (y && m && d) return new Date(y, m - 1, d);
+  }
+  const parsed = new Date(iso);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
 export default function TransactionsPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [txs, setTxs] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [loadError, setLoadError] = useState<string | null>(null);
+
   const [formError, setFormError] = useState<string | null>(null);
+
+  const [nameError, setNameError] = useState<string | null>(null);
   const [amountError, setAmountError] = useState<string | null>(null);
+  const [accountError, setAccountError] = useState<string | null>(null);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
 
   const [kind, setKind] = useState<"expense" | "income">("expense");
   const [name, setName] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
   const [accountId, setAccountId] = useState<string>("");
   const [category, setCategory] = useState<string>("Food");
-  const [date, setDate] = useState<string>(() => new Date().toISOString().slice(0, 10));
+
+  const [date, setDate] = useState<Date>(new Date());
+
   const [note, setNote] = useState<string>("");
 
   const [qName, setQName] = useState<string>("");
   const [qCategory, setQCategory] = useState<string>("");
-  const [startDate, setStartDate] = useState<string>(""); 
-  const [endDate, setEndDate] = useState<string>(""); 
+
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const PAGE_SIZE = 5;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -70,15 +107,15 @@ export default function TransactionsPage() {
     const nameQ = qName.trim().toLowerCase();
     const catQ = qCategory.trim().toLowerCase();
 
+    const startISO = startDate ? toISODate(startDate) : "";
+    const endISO = endDate ? toISODate(endDate) : "";
+
     return sortedTxs.filter((t) => {
-      const matchesName =
-        !nameQ || (t.name || "").toLowerCase().includes(nameQ);
+      const matchesName = !nameQ || (t.name || "").toLowerCase().includes(nameQ);
+      const matchesCategory = !catQ || (t.category || "").toLowerCase().includes(catQ);
 
-      const matchesCategory =
-        !catQ || (t.category || "").toLowerCase().includes(catQ);
-
-      const matchesStart = !startDate || t.date >= startDate;
-      const matchesEnd = !endDate || t.date <= endDate;
+      const matchesStart = !startISO || t.date >= startISO;
+      const matchesEnd = !endISO || t.date <= endISO;
 
       return matchesName && matchesCategory && matchesStart && matchesEnd;
     });
@@ -95,9 +132,11 @@ export default function TransactionsPage() {
       const aRes = await fetch("/api/accounts", { cache: "no-store" });
       if (aRes.status === 401) {
         setLoadError("You are not signed in.");
+        await fetch("/api/signout", { method: "POST" });
         setAccounts([]);
         setTxs([]);
         setLoading(false);
+        window.location.href = "/";
         return;
       }
 
@@ -112,6 +151,16 @@ export default function TransactionsPage() {
       }
 
       const tRes = await fetch("/api/transactions", { cache: "no-store" });
+      if (tRes.status === 401) {
+        setLoadError("You are not signed in.");
+        await fetch("/api/signout", { method: "POST" });
+        setAccounts([]);
+        setTxs([]);
+        setLoading(false);
+        window.location.href = "/";
+        return;
+      }
+
       if (!tRes.ok) {
         setLoadError((prev) => prev ?? "Failed to load transactions.");
         setTxs([]);
@@ -141,20 +190,21 @@ export default function TransactionsPage() {
   }, [qName, qCategory, startDate, endDate]);
 
   useEffect(() => {
-    if (startDate && endDate && endDate < startDate) {
-      setEndDate(startDate);
-    }
+    if (startDate && endDate && endDate < startDate) setEndDate(startDate);
   }, [startDate, endDate]);
 
   async function addTransaction(e: React.FormEvent) {
     e.preventDefault();
 
     setFormError(null);
+    setNameError(null);
     setAmountError(null);
+    setAccountError(null);
+    setCategoryError(null);
 
     const cleanName = name.trim();
     if (!cleanName) {
-      setFormError("Transaction name is required.");
+      setNameError("Transaction name is required.");
       return;
     }
 
@@ -165,12 +215,12 @@ export default function TransactionsPage() {
     }
 
     if (!accountId) {
-      setFormError("Choose an account.");
+      setAccountError("Choose an account.");
       return;
     }
 
     if (!category.trim()) {
-      setFormError("Choose a category.");
+      setCategoryError("Choose a category.");
       return;
     }
 
@@ -184,13 +234,15 @@ export default function TransactionsPage() {
           amount: num,
           accountId,
           category: category.trim(),
-          date,
+          date: toISODate(date),
           note: note.trim() ? note.trim() : null,
         }),
       });
 
       if (res.status === 401) {
         setFormError("You are not signed in.");
+        await fetch("/api/signout", { method: "POST" });
+        window.location.href = "/";
         return;
       }
 
@@ -213,6 +265,7 @@ export default function TransactionsPage() {
       setName("");
       setAmount("");
       setNote("");
+      setDate(new Date());
     } catch {
       setFormError("Network error while adding transaction.");
     }
@@ -255,10 +308,16 @@ export default function TransactionsPage() {
             <label className="text-xs font-medium text-gray-600">Name</label>
             <input
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-blue-300 focus:ring-4 focus:ring-blue-500 px-3 py-2"
+              onChange={(e) => {
+                setName(e.target.value);
+                setNameError(null);
+              }}
+              className={`mt-1 w-full rounded-lg border px-3 py-2 focus:ring-4 focus:ring-blue-500 ${
+                nameError ? "border-red-400" : "border-blue-300"
+              }`}
               placeholder="e.g. Groceries, Salary…"
             />
+            {nameError ? <p className="mt-1 text-xs text-red-600">{nameError}</p> : null}
           </div>
 
           <div>
@@ -282,8 +341,13 @@ export default function TransactionsPage() {
             <label className="text-xs font-medium text-gray-600">Account</label>
             <select
               value={accountId}
-              onChange={(e) => setAccountId(e.target.value)}
-              className="mt-1 w-full rounded-lg border px-3 py-2 border-blue-300 focus:ring-4 focus:ring-blue-500"
+              onChange={(e) => {
+                setAccountId(e.target.value);
+                setAccountError(null);
+              }}
+              className={`mt-1 w-full rounded-lg border px-3 py-2 focus:ring-4 focus:ring-blue-500 ${
+                accountError ? "border-red-400" : "border-blue-300"
+              }`}
             >
               {accounts.map((a) => (
                 <option key={a.id} value={a.id}>
@@ -291,28 +355,37 @@ export default function TransactionsPage() {
                 </option>
               ))}
             </select>
+            {accountError ? <p className="mt-1 text-xs text-red-600">{accountError}</p> : null}
           </div>
 
           <div>
             <label className="text-xs font-medium text-gray-600">Category</label>
             <input
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-blue-300 focus:ring-4 focus:ring-blue-500 px-3 py-2"
+              onChange={(e) => {
+                setCategory(e.target.value);
+                setCategoryError(null);
+              }}
+              className={`mt-1 w-full rounded-lg border px-3 py-2 focus:ring-4 focus:ring-blue-500 ${
+                categoryError ? "border-red-400" : "border-blue-300"
+              }`}
               placeholder="Food, Salary, Rent…"
             />
+            {categoryError ? <p className="mt-1 text-xs text-red-600">{categoryError}</p> : null}
           </div>
         </div>
 
         <div className="mt-4 grid gap-4 md:grid-cols-5">
           <div>
             <label className="text-xs font-medium text-gray-600">Date</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-blue-300 focus:ring-4 focus:ring-blue-500 px-3 py-2"
-            />
+            <div className="mt-1">
+              <DatePicker
+                selected={date}
+                onChange={(d: Date | null) => d && setDate(d)}
+                dateFormat="dd/MM/yyyy"
+                className="w-full rounded-lg border border-blue-300 px-3 py-2 focus:ring-4 focus:ring-blue-500"
+              />
+            </div>
           </div>
 
           <div className="md:col-span-3">
@@ -368,23 +441,34 @@ export default function TransactionsPage() {
 
           <div>
             <label className="text-xs font-medium text-gray-600">Start date</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-blue-300 px-3 py-2 focus:ring-4 focus:ring-blue-500"
-            />
+            <div className="mt-1">
+              <DatePicker
+                selected={startDate}
+                onChange={(d: Date | null) => {
+                  setStartDate(d);
+                  if (d && endDate && endDate < d) setEndDate(d);
+                }}
+                isClearable
+                placeholderText="dd/mm/yyyy"
+                dateFormat="dd/MM/yyyy"
+                className="w-full rounded-lg border border-blue-300 px-3 py-2 focus:ring-4 focus:ring-blue-500"
+              />
+            </div>
           </div>
 
           <div>
             <label className="text-xs font-medium text-gray-600">End date</label>
-            <input
-              type="date"
-              value={endDate}
-              min={startDate || undefined} 
-              onChange={(e) => setEndDate(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-blue-300 px-3 py-2 focus:ring-4 focus:ring-blue-500"
-            />
+            <div className="mt-1">
+              <DatePicker
+                selected={endDate}
+                onChange={(d: Date | null) => setEndDate(d)}
+                isClearable
+                placeholderText="dd/mm/yyyy"
+                minDate={startDate ?? undefined}
+                dateFormat="dd/MM/yyyy"
+                className="w-full rounded-lg border border-blue-300 px-3 py-2 focus:ring-4 focus:ring-blue-500"
+              />
+            </div>
           </div>
         </div>
 
@@ -399,8 +483,8 @@ export default function TransactionsPage() {
             onClick={() => {
               setQName("");
               setQCategory("");
-              setStartDate("");
-              setEndDate("");
+              setStartDate(null);
+              setEndDate(null);
             }}
             className="rounded-lg border border-blue-300 bg-gray-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-gray-100 focus:ring-4 focus:ring-blue-500"
           >
@@ -433,7 +517,7 @@ export default function TransactionsPage() {
                   {t.note ? <div className="mt-0.5 text-xs text-gray-500 truncate">{t.note}</div> : null}
 
                   <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                    <span className="rounded-full bg-white border px-2 py-0.5">{t.date}</span>
+                    <span className="rounded-full bg-white border px-2 py-0.5">{fmtDMY(t.date)}</span>
                     <span className="rounded-full bg-white border px-2 py-0.5">{paymentLabel(t.accountType)}</span>
                     <span className="rounded-full bg-white border px-2 py-0.5">{t.category}</span>
                   </div>

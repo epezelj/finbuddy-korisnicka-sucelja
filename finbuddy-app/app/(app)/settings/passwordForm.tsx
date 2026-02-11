@@ -7,66 +7,74 @@ export default function SecurityPasswordForm({
 }: {
   action: (formData: FormData) => void;
 }) {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
     <form action={action} className="space-y-4">
       <div>
-        <label className="text-xs font-medium text-gray-600">Current password</label>
+        <label className="text-xs font-medium text-gray-600">
+          Current password
+        </label>
         <div className="relative mt-1">
           <input
             name="currentPassword"
-            type={showPassword ? "text" : "password"}
+            type={showCurrentPassword ? "text" : "password"}
             className="w-full rounded-lg border px-3 py-2 pr-16"
             placeholder="••••••••"
           />
           <button
             type="button"
-            onClick={() => setShowPassword((s) => !s)}
+            onClick={() => setShowCurrentPassword((s) => !s)}
             className="absolute inset-y-0 right-2 my-auto h-8 rounded-lg px-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-            aria-pressed={showPassword}
+            aria-pressed={showCurrentPassword}
           >
-            {showPassword ? "Hide" : "Show"}
+            {showCurrentPassword ? "Hide" : "Show"}
           </button>
         </div>
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600">New password</label>
+        <label className="text-xs font-medium text-gray-600">
+          New password
+        </label>
         <div className="relative mt-1">
           <input
             name="newPassword"
-            type={showPassword ? "text" : "password"}
+            type={showNewPassword ? "text" : "password"}
             className="w-full rounded-lg border px-3 py-2 pr-16"
             placeholder="At least 6 characters"
           />
           <button
             type="button"
-            onClick={() => setShowPassword((s) => !s)}
+            onClick={() => setShowNewPassword((s) => !s)}
             className="absolute inset-y-0 right-2 my-auto h-8 rounded-lg px-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-            aria-pressed={showPassword}
+            aria-pressed={showNewPassword}
           >
-            {showPassword ? "Hide" : "Show"}
+            {showNewPassword ? "Hide" : "Show"}
           </button>
         </div>
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600">Confirm new password</label>
+        <label className="text-xs font-medium text-gray-600">
+          Confirm new password
+        </label>
         <div className="relative mt-1">
           <input
             name="confirmPassword"
-            type={showPassword ? "text" : "password"}
+            type={showConfirmPassword ? "text" : "password"}
             className="w-full rounded-lg border px-3 py-2 pr-16"
             placeholder="Repeat new password"
           />
           <button
             type="button"
-            onClick={() => setShowPassword((s) => !s)}
+            onClick={() => setShowConfirmPassword((s) => !s)}
             className="absolute inset-y-0 right-2 my-auto h-8 rounded-lg px-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-            aria-pressed={showPassword}
+            aria-pressed={showConfirmPassword}
           >
-            {showPassword ? "Hide" : "Show"}
+            {showConfirmPassword ? "Hide" : "Show"}
           </button>
         </div>
       </div>
