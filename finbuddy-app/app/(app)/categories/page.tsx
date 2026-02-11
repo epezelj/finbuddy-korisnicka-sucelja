@@ -61,7 +61,11 @@ export default function CategoriesPage() {
   const [txs, setTxs] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  // ✅ separate errors so form validation doesn't "crash" the whole page
+  const [pageError, setPageError] = useState<string | null>(null); // load/auth/fetch
+  const [addError, setAddError] = useState<string | null>(null);   // add form only
+  const [editError, setEditError] = useState<string | null>(null); // edit modal only
 
   const [addName, setAddName] = useState("");
   const [addType, setAddType] = useState<CategoryType>("expense");
@@ -80,23 +84,23 @@ export default function CategoriesPage() {
 
   async function loadAll() {
     setLoading(true);
-    setError(null);
+    setPageError(null);
 
     const [cRes, tRes] = await Promise.all([fetch("/api/categories"), fetch("/api/transactions")]);
 
     if (cRes.status === 401 || tRes.status === 401) {
-      setError("You are not signed in.");
+      setPageError("You are not signed in.");
       setLoading(false);
       return;
     }
 
     if (!cRes.ok) {
-      setError("Failed to load categories.");
+      setPageError("Failed to load categories.");
       setLoading(false);
       return;
     }
     if (!tRes.ok) {
-      setError("Failed to load transactions.");
+      setPageError("Failed to load transactions.");
       setLoading(false);
       return;
     }
@@ -247,12 +251,12 @@ export default function CategoriesPage() {
   async function addCategory() {
     const name = normalizeCategoryName(addName);
     if (!name) {
-      setError("Enter a category name.");
+      setAddError("Enter a category name.");
       return;
     }
 
     setBusy(true);
-    setError(null);
+    setAddError(null);
 
     const monthlyLimitCents =
       addType === "expense" && addLimitEUR.trim()
@@ -261,44 +265,46 @@ export default function CategoriesPage() {
 
     if (addType === "expense" && addLimitEUR.trim() && monthlyLimitCents === null) {
       setBusy(false);
-      setError("Monthly limit must be a valid number.");
+      setAddError("Monthly limit must be a valid number.");
       return;
     }
 
-    const color = DEFAULT_COLORS[Math.floor(Math.random() * DEFAULT_COLORS.length)];
+    try {
+      const color = DEFAULT_COLORS[Math.floor(Math.random() * DEFAULT_COLORS.length)];
 
-    const res = await fetch("/api/categories", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        type: addType,
-        color,
-        monthlyLimitCents,
-      }),
-    });
+      const res = await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          type: addType,
+          color,
+          monthlyLimitCents,
+        }),
+      });
 
-    if (res.status === 401) {
+      if (res.status === 401) {
+        setAddError("You are not signed in.");
+        return;
+      }
+
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        setAddError(j.error ?? "Failed to add category.");
+        return;
+      }
+
+      setAddName("");
+      setAddLimitEUR("");
+      await loadAll();
+    } finally {
       setBusy(false);
-      setError("You are not signed in.");
-      return;
     }
-
-    if (!res.ok) {
-      const j = await res.json().catch(() => ({}));
-      setBusy(false);
-      setError(j.error ?? "Failed to add category.");
-      return;
-    }
-
-    setAddName("");
-    setAddLimitEUR("");
-    await loadAll();
-    setBusy(false);
   }
 
   function openEdit(c: Category) {
     setEditing(c);
+    setEditError(null);
     setEditName(c.name);
     setEditType(c.type);
     setEditColor(c.color || "#2563EB");
@@ -310,7 +316,7 @@ export default function CategoriesPage() {
 
     const name = normalizeCategoryName(editName);
     if (!name) {
-      setError("Category name is required.");
+      setEditError("Category name is required.");
       return;
     }
 
@@ -320,39 +326,40 @@ export default function CategoriesPage() {
         : null;
 
     if (editType === "expense" && editLimitEUR.trim() && monthlyLimitCents === null) {
-      setError("Monthly limit must be a valid number.");
+      setEditError("Monthly limit must be a valid number.");
       return;
     }
 
     setBusy(true);
-    setError(null);
+    setEditError(null);
 
-    const res = await fetch(`/api/categories?id=${encodeURIComponent(editing.id)}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        type: editType,
-        color: editColor,
-        monthlyLimitCents,
-      }),
-    });
+    try {
+      const res = await fetch(`/api/categories?id=${encodeURIComponent(editing.id)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          type: editType,
+          color: editColor,
+          monthlyLimitCents,
+        }),
+      });
 
-    if (res.status === 401) {
+      if (res.status === 401) {
+        setEditError("You are not signed in.");
+        return;
+      }
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        setEditError(j.error ?? "Failed to update category.");
+        return;
+      }
+
+      setEditing(null);
+      await loadAll();
+    } finally {
       setBusy(false);
-      setError("You are not signed in.");
-      return;
     }
-    if (!res.ok) {
-      const j = await res.json().catch(() => ({}));
-      setBusy(false);
-      setError(j.error ?? "Failed to update category.");
-      return;
-    }
-
-    setEditing(null);
-    await loadAll();
-    setBusy(false);
   }
 
   async function deleteCategory(c: Category) {
@@ -360,31 +367,37 @@ export default function CategoriesPage() {
     if (!ok) return;
 
     setBusy(true);
-    setError(null);
+    setPageError(null);
 
-    const res = await fetch(`/api/categories?id=${encodeURIComponent(c.id)}`, { method: "DELETE" });
+    try {
+      const res = await fetch(`/api/categories?id=${encodeURIComponent(c.id)}`, { method: "DELETE" });
 
-    if (res.status === 401) {
+      if (res.status === 401) {
+        setPageError("You are not signed in.");
+        return;
+      }
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        setPageError(j.error ?? "Failed to delete category.");
+        return;
+      }
+
+      await loadAll();
+    } finally {
       setBusy(false);
-      setError("You are not signed in.");
-      return;
     }
-    if (!res.ok) {
-      const j = await res.json().catch(() => ({}));
-      setBusy(false);
-      setError(j.error ?? "Failed to delete category.");
-      return;
-    }
-
-    await loadAll();
-    setBusy(false);
   }
 
   if (loading) return <div className="mx-auto max-w-6xl px-4 py-10">Loading categories…</div>;
-  if (error) return <div className="mx-auto max-w-6xl px-4 py-10 text-red-600">{error}</div>;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10">
+      {pageError ? (
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {pageError}
+        </div>
+      ) : null}
+
       <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Categories</h1>
@@ -451,7 +464,10 @@ export default function CategoriesPage() {
             <div className="relative">
               <input
                 value={addName}
-                onChange={(e) => setAddName(e.target.value)}
+                onChange={(e) => {
+                  setAddName(e.target.value);
+                  if (addError) setAddError(null);
+                }}
                 onFocus={() => setShowSuggest(true)}
                 onBlur={() => setTimeout(() => setShowSuggest(false), 120)}
                 placeholder="e.g. Coffee, Rent, Family expenses"
@@ -470,6 +486,7 @@ export default function CategoriesPage() {
                         onClick={() => {
                           setAddName(s);
                           setShowSuggest(false);
+                          setAddError(null);
                         }}
                         className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50"
                       >
@@ -499,7 +516,10 @@ export default function CategoriesPage() {
             <label className="text-xs font-medium text-gray-600">Type</label>
             <select
               value={addType}
-              onChange={(e) => setAddType(e.target.value as CategoryType)}
+              onChange={(e) => {
+                setAddType(e.target.value as CategoryType);
+                if (addError) setAddError(null);
+              }}
               className="mt-1 w-full rounded-lg border px-3 py-2"
             >
               <option value="expense">Expense</option>
@@ -511,13 +531,22 @@ export default function CategoriesPage() {
             <label className="text-xs font-medium text-gray-600">Monthly limit (EUR)</label>
             <input
               value={addLimitEUR}
-              onChange={(e) => setAddLimitEUR(e.target.value)}
+              onChange={(e) => {
+                setAddLimitEUR(e.target.value);
+                if (addError) setAddError(null);
+              }}
               placeholder={addType === "expense" ? "e.g. 200" : "—"}
               disabled={addType !== "expense"}
               className="mt-1 w-full rounded-lg border px-3 py-2 disabled:bg-gray-100"
             />
           </div>
         </div>
+
+        {addError ? (
+          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {addError}
+          </div>
+        ) : null}
 
         <div className="mt-4 flex items-center justify-between gap-3">
           {inferredNames.length > 0 ? (
@@ -660,17 +689,32 @@ export default function CategoriesPage() {
           <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl border">
             <div className="px-6 py-4 border-b flex items-center justify-between">
               <div className="text-sm font-semibold text-gray-900">Edit category</div>
-              <button onClick={() => setEditing(null)} className="text-sm font-semibold text-gray-600 hover:text-gray-900">
+              <button
+                onClick={() => {
+                  setEditing(null);
+                  setEditError(null);
+                }}
+                className="text-sm font-semibold text-gray-600 hover:text-gray-900"
+              >
                 Close
               </button>
             </div>
+
+            {editError ? (
+              <div className="mx-6 mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {editError}
+              </div>
+            ) : null}
 
             <div className="px-6 py-5 grid gap-4">
               <div>
                 <label className="text-xs font-medium text-gray-600">Name</label>
                 <input
                   value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
+                  onChange={(e) => {
+                    setEditName(e.target.value);
+                    if (editError) setEditError(null);
+                  }}
                   className="mt-1 w-full rounded-lg border px-3 py-2"
                 />
               </div>
@@ -680,7 +724,10 @@ export default function CategoriesPage() {
                   <label className="text-xs font-medium text-gray-600">Type</label>
                   <select
                     value={editType}
-                    onChange={(e) => setEditType(e.target.value as CategoryType)}
+                    onChange={(e) => {
+                      setEditType(e.target.value as CategoryType);
+                      if (editError) setEditError(null);
+                    }}
                     className="mt-1 w-full rounded-lg border px-3 py-2"
                   >
                     <option value="expense">Expense</option>
@@ -693,7 +740,10 @@ export default function CategoriesPage() {
                   <label className="text-xs font-medium text-gray-600">Monthly limit (EUR)</label>
                   <input
                     value={editLimitEUR}
-                    onChange={(e) => setEditLimitEUR(e.target.value)}
+                    onChange={(e) => {
+                      setEditLimitEUR(e.target.value);
+                      if (editError) setEditError(null);
+                    }}
                     disabled={editType !== "expense"}
                     placeholder={editType === "expense" ? "e.g. 200" : "—"}
                     className="mt-1 w-full rounded-lg border px-3 py-2 disabled:bg-gray-100"
@@ -708,22 +758,44 @@ export default function CategoriesPage() {
                     <button
                       key={c}
                       type="button"
-                      onClick={() => setEditColor(c)}
+                      onClick={() => {
+                        setEditColor(c);
+                        if (editError) setEditError(null);
+                      }}
                       className={`h-8 w-8 rounded-full border ${editColor === c ? "ring-2 ring-offset-2 ring-blue-600" : ""}`}
                       style={{ backgroundColor: c }}
                       title={c}
                     />
                   ))}
-                  <input type="color" value={editColor} onChange={(e) => setEditColor(e.target.value)} className="h-8 w-12 rounded border" title="Custom color" />
+                  <input
+                    type="color"
+                    value={editColor}
+                    onChange={(e) => {
+                      setEditColor(e.target.value);
+                      if (editError) setEditError(null);
+                    }}
+                    className="h-8 w-12 rounded border"
+                    title="Custom color"
+                  />
                 </div>
               </div>
             </div>
 
             <div className="px-6 py-4 border-t flex items-center justify-end gap-3">
-              <button onClick={() => setEditing(null)} className="rounded-lg border px-4 py-2 font-semibold text-gray-700 hover:bg-gray-50">
+              <button
+                onClick={() => {
+                  setEditing(null);
+                  setEditError(null);
+                }}
+                className="rounded-lg border px-4 py-2 font-semibold text-gray-700 hover:bg-gray-50"
+              >
                 Cancel
               </button>
-              <button onClick={saveEdit} disabled={busy} className="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-60">
+              <button
+                onClick={saveEdit}
+                disabled={busy}
+                className="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+              >
                 Save
               </button>
             </div>

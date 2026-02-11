@@ -404,7 +404,7 @@ export default function TransactionsPage() {
               disabled={loading}
               className="w-full rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 disabled:opacity-60"
             >
-              + Add
+              Add transaction
             </button>
           </div>
         </div>
